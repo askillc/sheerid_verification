@@ -3,4 +3,4 @@ Source code for @SheerID_VIP_Bot (https://t.me/channel_sheerid_vip_bot) the paid
 
 Source valid: 2026/03/06
 
-Contact Telegram (@askillc) to get it
+Contact Telegram (@askillc) to buy it
