@@ -1,0 +1,32 @@
+﻿[
+    {
+        "id":  1,
+        "profile_id":  "478f16",
+        "profile_name":  "LocketGold_Pool_1",
+        "api_key":  "12505521742018aba17a388f1b51f97cc9",
+        "is_active":  true,
+        "is_assigned":  true,
+        "assigned_to_username":  "rinnef09",
+        "assigned_to_telegram_id":  null,
+        "assigned_at":  "2026-02-24T05:11:41.293114+00:00",
+        "created_at":  "2026-02-24T05:07:35.382568+00:00",
+        "last_used":  "2026-02-24T05:11:41.293114+00:00",
+        "usage_count":  1,
+        "notes":  null
+    },
+    {
+        "id":  2,
+        "profile_id":  "27e6a6",
+        "profile_name":  "LocketGold_Pool_2",
+        "api_key":  "fddda840d8250754ab2d19d80a2e0734fb",
+        "is_active":  true,
+        "is_assigned":  true,
+        "assigned_to_username":  "quangmanuel",
+        "assigned_to_telegram_id":  null,
+        "assigned_at":  "2026-02-24T05:23:10.968797+00:00",
+        "created_at":  "2026-02-24T05:07:35.382568+00:00",
+        "last_used":  "2026-02-24T05:23:10.968797+00:00",
+        "usage_count":  1,
+        "notes":  null
+    }
+]
