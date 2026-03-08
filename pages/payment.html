@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nạp Xu - SheerID VIP Bot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .payment-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .rate-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .rate-text {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .rate-detail {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-weight: 400;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 300;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00d4aa;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 0 30px rgba(0, 212, 170, 0.3),
+                0 0 0 4px rgba(0, 212, 170, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00d4aa, #00b894);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+        }
+
+        .qr-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .qr-code {
+            margin: 0 auto;
+        }
+
+        .payment-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .payment-amount {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .payment-coins {
+            color: #00d4aa;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .payment-note {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .confirm-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .payment-container {
+                padding: 30px 20px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="goBack()">←</button>
+    
+    <div class="payment-container">
+        <h1 class="title">💰 Nạp Xu</h1>
+        <p class="subtitle">Nạp xu vào tài khoản SheerID VIP Bot</p>
+        
+        <div class="rate-info">
+            <div class="rate-text">💎 Tỷ giá: 1 xu = 1,000 VNĐ</div>
+            <div class="rate-detail">Tối thiểu: 10.000 VNĐ (10 xu) | Tối đa: 1.000.000 VNĐ (1,000 xu)</div>
+        </div>
+
+        <form id="paymentForm">
+            <div class="form-group">
+                <label class="form-label" for="coins">Số xu muốn nạp</label>
+                <input type="number" class="form-input" id="coins" placeholder="Nhập số xu (10-1000)" min="10" max="1000" required>
+            </div>
+
+            <button type="button" class="calculate-btn" onclick="calculatePayment()">
+                💰 Tính toán thanh toán
+            </button>
+
+            <div class="error-message" id="errorMessage"></div>
+        </form>
+
+        <div class="qr-section" id="qrSection">
+            <div class="payment-info">
+                <div class="payment-amount" id="paymentAmount">0 VNĐ</div>
+                <div class="payment-coins" id="paymentCoins">0 xu</div>
+                <div class="payment-note">
+                    📱 Quét QR code bên dưới để thanh toán<br>
+                    💳 Chuyển khoản đúng số tiền để nhận xu<br>
+                    ⏰ Xu sẽ được cộng tự động sau 1-2 phút<br>
+                    💰 Tối thiểu: 10.000 VNĐ (10 xu)<br>
+                    🔄 Đang theo dõi trạng thái thanh toán...
+                </div>
+            </div>
+
+            <div class="qr-container">
+                <div id="qrcode" class="qr-code"></div>
+            </div>
+
+            <button class="confirm-btn" onclick="confirmPayment()">
+                ✅ Tôi đã chuyển khoản
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Bank account info (replace with your actual bank info)
+        const BANK_INFO = {
+            bank: "Vietcombank",
+            accountNumber: "1234567890",
+            accountName: "NGUYEN VAN A",
+            qrContent: "1234567890|NGUYEN VAN A|Vietcombank"
+        };
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function calculatePayment() {
+            const coins = parseInt(document.getElementById('coins').value);
+            
+            if (!coins || coins < 10 || coins > 1000) {
+                showError('Số xu phải từ 10 đến 1000');
+                return;
+            }
+
+            const amount = coins * 1000; // 1 xu = 1000 VNĐ
+            
+            // Get telegram_id from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            let telegramId = urlParams.get('telegram_id');
+            
+            if (!telegramId) {
+                telegramId = prompt('Vui lòng nhập Telegram ID của bạn (lấy từ /me trong bot):');
+                if (!telegramId) {
+                    showError('Cần có Telegram ID để tạo QR thanh toán');
+                    return;
+                }
+            }
+            
+            // Show loading
+            const calculateBtn = document.querySelector('.calculate-btn');
+            const originalText = calculateBtn.textContent;
+            calculateBtn.textContent = '⏳ Đang tạo QR...';
+            calculateBtn.disabled = true;
+            
+            // Create payment QR via API
+            createPaymentQR(telegramId, coins, amount);
+        }
+        
+        function createPaymentQR(telegramId, coins, amount) {
+            fetch('https://dqsheerid.vercel.app/create-payment-qr', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    telegram_id: telegramId,
+                    coins: coins,
+                    amount: amount
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update display
+                    document.getElementById('paymentAmount').textContent = amount.toLocaleString('vi-VN') + ' VNĐ';
+                    document.getElementById('paymentCoins').textContent = coins + ' xu';
+                    
+                    // Show QR code
+                    const qrContainer = document.getElementById('qrcode');
+                    qrContainer.innerHTML = `<img src="${data.qr_url}" alt="QR Code" style="max-width: 200px; height: auto;">`;
+                    
+                    // Store transaction info
+                    window.currentTransaction = {
+                        id: data.transaction_id,
+                        coins: coins,
+                        amount: amount,
+                        expires_at: data.expires_at
+                    };
+                    
+                    // Show QR section
+                    document.getElementById('qrSection').style.display = 'block';
+                    
+                    // Start checking payment status
+                    startPaymentStatusCheck(data.transaction_id);
+                } else {
+                    showError(`Lỗi tạo QR: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Lỗi kết nối! Vui lòng thử lại');
+            })
+            .finally(() => {
+                // Reset button
+                const calculateBtn = document.querySelector('.calculate-btn');
+                calculateBtn.textContent = '💰 Tính toán thanh toán';
+                calculateBtn.disabled = false;
+            });
+        }
+        
+        function startPaymentStatusCheck(transactionId) {
+            const checkInterval = setInterval(() => {
+                fetch(`https://dqsheerid.vercel.app/check-payment-status/${transactionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.status === 'success') {
+                            clearInterval(checkInterval);
+                            alert(`✅ Nạp xu thành công!\n\n💰 Số xu nạp: ${data.coins}\n🪙 Tổng xu: ${data.coins}\n\n📱 Kiểm tra bot để xem thông báo xác nhận!`);
+                            window.location.href = 'https://t.me/SheerID_VIP_Bot';
+                        } else if (data.status === 'failed') {
+                            clearInterval(checkInterval);
+                            alert('❌ Giao dịch thất bại! Vui lòng thử lại');
+                        }
+                        // If still pending, continue checking
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking payment status:', error);
+                });
+            }, 5000); // Check every 5 seconds
+            
+            // Stop checking after 15 minutes
+            setTimeout(() => {
+                clearInterval(checkInterval);
+            }, 15 * 60 * 1000);
+        }
+
+        function confirmPayment() {
+            const coins = parseInt(document.getElementById('coins').value);
+            const amount = coins * 1000;
+            
+            // Generate transaction ID
+            const transactionId = 'TXN_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            // Get telegram_id from URL parameter or prompt user
+            const urlParams = new URLSearchParams(window.location.search);
+            let telegramId = urlParams.get('telegram_id');
+            
+            if (!telegramId) {
+                telegramId = prompt('Vui lòng nhập Telegram ID của bạn (lấy từ /me trong bot):');
+                if (!telegramId) {
+                    alert('❌ Cần có Telegram ID để xử lý thanh toán');
+                    return;
+                }
+            }
+            
+            // Process payment
+            processPayment(telegramId, coins, amount, transactionId);
+        }
+        
+        function processPayment(telegramId, coins, amount, transactionId) {
+            // Show loading
+            const confirmBtn = document.querySelector('.confirm-btn');
+            const originalText = confirmBtn.textContent;
+            confirmBtn.textContent = '⏳ Đang xử lý...';
+            confirmBtn.disabled = true;
+            
+            // Call API to process payment
+            fetch('https://dqsheerid.vercel.app/process-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    telegram_id: telegramId,
+                    coins: coins,
+                    amount: amount,
+                    transaction_id: transactionId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`✅ Nạp xu thành công!\n\n💰 Số xu nạp: ${coins}\n🪙 Tổng xu: ${data.new_balance}\n🆔 Transaction ID: ${transactionId}\n\n📱 Kiểm tra bot để xem thông báo xác nhận!`);
+                    // Redirect back to bot
+                    window.location.href = 'https://t.me/SheerID_VIP_Bot';
+                } else {
+                    alert(`❌ Lỗi: ${data.error}\n\n📞 Liên hệ hỗ trợ: @meepzizhere`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(`❌ Lỗi kết nối!\n\n📞 Liên hệ hỗ trợ: @meepzizhere`);
+            })
+            .finally(() => {
+                // Reset button
+                confirmBtn.textContent = originalText;
+                confirmBtn.disabled = false;
+            });
+        }
+
+        // Auto-focus on input
+        document.getElementById('coins').focus();
+    </script>
+</body>
+</html>

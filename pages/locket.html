@@ -1,0 +1,1584 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locket Gold - Kích hoạt 1 năm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1410 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            animation: float-particle 15s infinite ease-in-out;
+        }
+
+        @keyframes float-particle {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 40px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .logo-text h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+
+        .payment-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .payment-card {
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .payment-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .payment-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #d4af37;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .price-display {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .price-amount {
+            font-size: 48px;
+            font-weight: 900;
+            color: #d4af37;
+            margin-bottom: 8px;
+        }
+
+        .price-period {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+
+        .info-notice {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .info-notice p {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 14px;
+            font-size: 16px;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            background: rgba(30, 30, 30, 0.95);
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #d4af37 0%, #c9a332 100%);
+            color: #0a0a0a;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.3px;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #e5c04a 0%, #d4af37 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(30, 30, 30, 0.8);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            margin-top: 12px;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #d4af37;
+            color: #d4af37;
+        }
+
+        .features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            padding: 12px 0;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .features li:last-child {
+            border-bottom: none;
+        }
+
+        .features li:before {
+            content: "✓";
+            color: #d4af37;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 18px;
+            background: rgba(212, 175, 55, 0.2);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .package-option {
+            background: rgba(30, 30, 30, 0.8);
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .package-option:hover {
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .package-option.selected {
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.15);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .package-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .package-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .package-price {
+            font-size: 22px;
+            font-weight: 900;
+            color: #d4af37;
+        }
+
+        .package-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+
+        .selected-package {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .selected-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #d4af37;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            display: none;
+            font-size: 15px;
+            font-weight: 600;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .status.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status.error {
+            background: rgba(220, 53, 69, 0.15);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .status.info {
+            background: rgba(212, 175, 55, 0.15);
+            color: #d4af37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(212, 175, 55, 0.2);
+            border-top: 4px solid #d4af37;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Recent Purchases Sidebar */
+        .recent-purchases {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) translateX(0);
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.98) 0%, rgba(26, 20, 16, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-left: none;
+            border-radius: 0 20px 20px 0;
+            padding: 24px;
+            width: 320px;
+            max-height: 600px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 10px 0 40px rgba(212, 175, 55, 0.15), 0 0 60px rgba(0, 0, 0, 0.5);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Support Section */
+        .support-section {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(18, 18, 18, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 16px;
+            padding: 16px 20px;
+            z-index: 999;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .support-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            border-color: #d4af37;
+        }
+
+        .support-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .support-link:hover {
+            color: #d4af37;
+        }
+
+        .support-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #1877f2 0%, #0c63d4 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .support-link:hover .support-icon {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 992px) {
+            .support-section {
+                bottom: 10px;
+                right: 10px;
+                padding: 12px 16px;
+            }
+
+            .support-link {
+                font-size: 13px;
+                gap: 10px;
+            }
+
+            .support-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 16px;
+            }
+        }
+
+        .recent-purchases.hidden {
+            transform: translateY(-50%) translateX(calc(-100% + 50px));
+        }
+
+        .recent-purchases-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .recent-purchases-title {
+            font-size: 18px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.3px;
+        }
+
+        .toggle-purchases {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: #d4af37;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .toggle-purchases:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.15) 100%);
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: 0 6px 16px rgba(212, 175, 55, 0.3);
+        }
+
+        .purchase-item {
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.8) 0%, rgba(26, 20, 16, 0.8) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            animation: slideInLeft 0.4s ease-out;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .purchase-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #d4af37 0%, #c9a332 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .purchase-item:hover {
+            border-color: #d4af37;
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+        }
+
+        .purchase-item:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .purchase-username {
+            font-size: 15px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 6px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .purchase-package {
+            font-size: 13px;
+            color: #d4af37;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .purchase-time {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .recent-purchases::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .recent-purchases::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.6);
+            border-radius: 4px;
+        }
+
+        .recent-purchases::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #d4af37 0%, #c9a332 100%);
+            border-radius: 4px;
+            border: 2px solid rgba(30, 30, 30, 0.6);
+        }
+
+        .recent-purchases::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #e5c04a 0%, #d4af37 100%);
+        }
+
+        @media (max-width: 992px) {
+            .payment-container {
+                grid-template-columns: 1fr;
+            }
+
+            .recent-purchases {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .payment-card {
+                padding: 25px 20px;
+            }
+
+            .card-title {
+                font-size: 18px;
+            }
+
+            .price-amount {
+                font-size: 38px;
+            }
+        }
+        /* Version Update Banner - BOTTOM LEFT */
+        .version-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.98) 0%, rgba(26, 20, 16, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            z-index: 10001;
+            max-width: 320px;
+            animation: slideInLeft 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .version-banner-icon { 
+            font-size: 24px; 
+            flex-shrink: 0;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.2) rotate(10deg); opacity: 0.8; }
+        }
+        
+        .version-banner-content { flex: 1; }
+        .version-banner-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #d4af37;
+        }
+        .version-badge {
+            background: rgba(212, 175, 55, 0.3);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #d4af37;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .version-banner-time { 
+            font-size: 12px; 
+            opacity: 0.8;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Visitor Counter Widget - BOTTOM LEFT, ABOVE VERSION BANNER */
+        .visitor-counter {
+            position: fixed;
+            bottom: 90px; /* Above version banner */
+            left: 20px;
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.98) 0%, rgba(26, 20, 16, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 12px 20px;
+            z-index: 10000;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInLeft 0.5s ease-out 0.2s both;
+        }
+
+        .visitor-counter-icon {
+            font-size: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .visitor-counter-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .visitor-counter-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .visitor-counter-number {
+            font-size: 18px;
+            font-weight: 900;
+            color: #d4af37;
+            font-family: 'Inter', monospace;
+            animation: countPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes countPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+            .version-banner {
+                bottom: 10px; 
+                left: 10px; 
+                right: 10px;
+                max-width: none; 
+                padding: 10px 16px;
+            }
+            
+            .visitor-counter {
+                bottom: 70px;
+                left: 10px;
+                padding: 8px 14px;
+                gap: 8px;
+            }
+            
+            .visitor-counter-icon {
+                font-size: 16px;
+            }
+            
+            .visitor-counter-label {
+                font-size: 10px;
+            }
+            
+            .visitor-counter-number {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Visitor Counter Widget - Bottom Left (Above Version Banner) -->
+    <div class="visitor-counter" id="visitorCounter">
+        <div class="visitor-counter-icon">👥</div>
+        <div class="visitor-counter-text">
+            <div class="visitor-counter-label">Đang xem</div>
+            <div class="visitor-counter-number" id="visitorCount">-</div>
+        </div>
+    </div>
+
+    <!-- Version Update Banner - Bottom Left -->
+    <div class="version-banner" id="versionBanner">
+        <div class="version-banner-icon">✨</div>
+        <div class="version-banner-content">
+            <div class="version-banner-title">
+                Locket Gold
+                <span class="version-badge">v1.3</span>
+            </div>
+            <div class="version-banner-time">
+                Cập nhật: 21:08 - 25/ 02/2026
+            </div>
+        </div>
+    </div>
+
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">🎁</div>
+                <div class="logo-text">
+                    <h1>Locket Gold</h1>
+                    <p>Kích hoạt Premium - Gói 1 năm</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-container">
+            <div class="payment-card">
+                <h2 class="card-title">
+                    � Chọn gói
+                </h2>
+
+                <div class="package-option" onclick="selectPackage('1month', 10000)">
+                    <div class="package-header">
+                        <div class="package-name">Gói 1 tháng</div>
+                        <div class="package-price">10,000 VNĐ</div>
+                    </div>
+                    <div class="package-desc">Dùng thử</div>
+                </div>
+
+                <div class="package-option" onclick="selectPackage('5months', 30000)">
+                    <div class="package-header">
+                        <div class="package-name">Gói 5 tháng</div>
+                        <div class="package-price">30,000 VNĐ</div>
+                    </div>
+                    <div class="package-desc">⭐ Phổ biến nhất</div>
+                </div>
+
+                <div class="package-option" onclick="selectPackage('1year', 50000)">
+                    <div class="package-header">
+                        <div class="package-name">Gói 12 tháng</div>
+                        <div class="package-price">50,000 VNĐ</div>
+                    </div>
+                    <div class="package-desc">⭐ Tiết kiệm nhất</div>
+                </div>
+
+                <div class="info-notice" style="margin-top: 20px;">
+                    <p>💡 Đã từng kích hoạt? <strong style="color: #d4af37;">Miễn phí!</strong></p>
+                </div>
+            </div>
+
+            <div class="payment-card">
+                <h2 class="card-title">
+                    🚀 Kích hoạt ngay
+                </h2>
+
+                <div class="selected-package" id="selectedPackage">
+                    <div class="selected-text">Chưa Chọn gói</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="username">Locket Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        placeholder="Nhập username hoặc link"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="voucher">Mã giảm giá (tùy chọn)</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input 
+                            type="text" 
+                            id="voucher" 
+                            placeholder="Nhập mã voucher"
+                            autocomplete="off"
+                            style="flex: 1;"
+                        >
+                        <button class="btn" onclick="applyVoucher()" style="width: auto; padding: 18px 24px; white-space: nowrap;">
+                            Áp dụng
+                        </button>
+                    </div>
+                    <div id="voucherStatus" style="margin-top: 10px; display: none;"></div>
+                </div>
+
+                <button class="btn" onclick="checkUsername()">Kích hoạt ngay</button>
+                <button class="btn btn-secondary" onclick="showInstructions()">📖 Hướng dẫn sử dụng</button>
+
+                <div class="status" id="status"></div>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Đang xử lý...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Purchases Sidebar -->
+    <div class="recent-purchases" id="recentPurchases">
+        <div class="recent-purchases-header">
+            <div class="recent-purchases-title">
+                🔥 Mua gần đây
+            </div>
+            <button class="toggle-purchases" onclick="togglePurchases()">
+                →
+            </button>
+        </div>
+        <div id="purchasesList">
+            <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5); font-size: 13px;">
+                Đang tải...
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Section -->
+    <div class="support-section">
+        <a href="https://www.facebook.com/quangmanuel" target="_blank" class="support-link">
+            <div class="support-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16">
+                    <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                </svg>
+            </div>
+            <span>Admin hỗ trợ</span>
+        </a>
+    </div>
+
+    <script>
+        let selectedPackageData = null;
+        let purchasesVisible = true;
+        let appliedVoucher = null;
+
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particles.appendChild(particle);
+            }
+        }
+
+        function selectPackage(type, price) {
+            selectedPackageData = { type, price };
+            appliedVoucher = null; // Reset voucher when changing package
+            
+            document.querySelectorAll('.package-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            updateSelectedPackageDisplay();
+        }
+
+        function updateSelectedPackageDisplay() {
+            if (!selectedPackageData) {
+                document.getElementById('selectedPackage').innerHTML = `
+                    <div class="selected-text">Chưa Chọn gói</div>
+                `;
+                return;
+            }
+
+            const packageNames = {
+                '1month': 'Gói 1 tháng',
+                '5months': 'Gói 5 tháng',
+                '1year': '12 tháng'
+            };
+
+            let html = '';
+            
+            if (appliedVoucher) {
+                // Show discount
+                const originalPrice = selectedPackageData.price;
+                const finalPrice = appliedVoucher.final_price;
+                const discount = appliedVoucher.discount_amount;
+                
+                html = `
+                    <div class="selected-text">${packageNames[selectedPackageData.type]}</div>
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(212, 175, 55, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span style="font-size: 13px; color: rgba(255,255,255,0.6);">Giá gốc:</span>
+                            <span style="font-size: 14px; color: rgba(255,255,255,0.5); text-decoration: line-through;">${originalPrice.toLocaleString('vi-VN')} VNĐ</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span style="font-size: 13px; color: #10b981;">Giảm giá:</span>
+                            <span style="font-size: 14px; color: #10b981; font-weight: 700;">-${discount.toLocaleString('vi-VN')} VNĐ</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 14px; color: #d4af37; font-weight: 700;">Tổng thanh toán:</span>
+                            <span style="font-size: 18px; color: #d4af37; font-weight: 900;">${finalPrice.toLocaleString('vi-VN')} VNĐ</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html = `
+                    <div class="selected-text">${packageNames[selectedPackageData.type]} - ${selectedPackageData.price.toLocaleString('vi-VN')} VNĐ</div>
+                `;
+            }
+            
+            document.getElementById('selectedPackage').innerHTML = html;
+        }
+
+        async function applyVoucher() {
+            const voucherInput = document.getElementById('voucher');
+            const voucherCode = voucherInput.value.trim().toUpperCase();
+            const statusEl = document.getElementById('voucherStatus');
+
+            if (!selectedPackageData) {
+                statusEl.style.display = 'block';
+                statusEl.style.padding = '12px';
+                statusEl.style.borderRadius = '10px';
+                statusEl.style.fontSize = '13px';
+                statusEl.style.fontWeight = '600';
+                statusEl.style.background = 'rgba(220, 53, 69, 0.15)';
+                statusEl.style.color = '#dc3545';
+                statusEl.style.border = '1px solid rgba(220, 53, 69, 0.3)';
+                statusEl.textContent = '❌ Vui lòng Chọn gói trước';
+                return;
+            }
+
+            if (!voucherCode) {
+                statusEl.style.display = 'block';
+                statusEl.style.padding = '12px';
+                statusEl.style.borderRadius = '10px';
+                statusEl.style.fontSize = '13px';
+                statusEl.style.fontWeight = '600';
+                statusEl.style.background = 'rgba(220, 53, 69, 0.15)';
+                statusEl.style.color = '#dc3545';
+                statusEl.style.border = '1px solid rgba(220, 53, 69, 0.3)';
+                statusEl.textContent = '❌ Vui lòng nhập mã voucher';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/locket/validate-voucher', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: voucherCode,
+                        package_type: selectedPackageData.type,
+                        price: selectedPackageData.price
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    appliedVoucher = data.voucher;
+                    statusEl.style.display = 'block';
+                    statusEl.style.padding = '12px';
+                    statusEl.style.borderRadius = '10px';
+                    statusEl.style.fontSize = '13px';
+                    statusEl.style.fontWeight = '600';
+                    statusEl.style.background = 'rgba(16, 185, 129, 0.15)';
+                    statusEl.style.color = '#10b981';
+                    statusEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                    statusEl.textContent = `✅ ${data.message}`;
+                    updateSelectedPackageDisplay();
+                } else {
+                    appliedVoucher = null;
+                    statusEl.style.display = 'block';
+                    statusEl.style.padding = '12px';
+                    statusEl.style.borderRadius = '10px';
+                    statusEl.style.fontSize = '13px';
+                    statusEl.style.fontWeight = '600';
+                    statusEl.style.background = 'rgba(220, 53, 69, 0.15)';
+                    statusEl.style.color = '#dc3545';
+                    statusEl.style.border = '1px solid rgba(220, 53, 69, 0.3)';
+                    statusEl.textContent = `❌ ${data.message}`;
+                    updateSelectedPackageDisplay();
+                }
+            } catch (error) {
+                appliedVoucher = null;
+                statusEl.style.display = 'block';
+                statusEl.style.padding = '12px';
+                statusEl.style.borderRadius = '10px';
+                statusEl.style.fontSize = '13px';
+                statusEl.style.fontWeight = '600';
+                statusEl.style.background = 'rgba(220, 53, 69, 0.15)';
+                statusEl.style.color = '#dc3545';
+                statusEl.style.border = '1px solid rgba(220, 53, 69, 0.3)';
+                statusEl.textContent = '❌ Lỗi kiểm tra voucher';
+            }
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+        }
+
+        function hideStatus() {
+            document.getElementById('status').style.display = 'none';
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showInstructions() {
+            alert(`📖 HƯỚNG DẪN KÍCH HOẠT LOCKET GOLD
+
+1️⃣ Nhập username Locket của bạn
+2️⃣ Bấm "Kích hoạt ngay"
+3️⃣ Nếu cần thanh toán → Quét QR code
+4️⃣ Sau khi thanh toán → Tải DNS profile
+5️⃣ Cài DNS profile vào iPhone
+6️⃣ Tắt và mở lại app Locket
+7️⃣ Kiểm tra Gold đã có chưa
+
+⚠️ LƯU Ý:
+• Phải cài DNS trong 5 phút
+• Tắt và mở lại app sau khi cài DNS
+• Nếu mất Gold → Xóa DNS → Kích hoạt lại`);
+        }
+
+        function togglePurchases() {
+            const sidebar = document.getElementById('recentPurchases');
+            const button = sidebar.querySelector('.toggle-purchases');
+            purchasesVisible = !purchasesVisible;
+            
+            if (purchasesVisible) {
+                sidebar.classList.remove('hidden');
+                button.textContent = '←';
+            } else {
+                sidebar.classList.add('hidden');
+                button.textContent = '→';
+            }
+        }
+
+        function formatTimeAgo(timestamp) {
+            const now = new Date();
+            const time = new Date(timestamp);
+            const diffMs = now - time;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Vừa xong';
+            if (diffMins < 60) return `${diffMins} phút trước`;
+            if (diffHours < 24) return `${diffHours} giờ trước`;
+            if (diffDays < 7) return `${diffDays} ngày trước`;
+            return time.toLocaleDateString('vi-VN');
+        }
+
+        async function loadRecentPurchases() {
+            try {
+                const response = await fetch('/api/locket/recent-purchases');
+                
+                // Check if response is OK
+                if (!response.ok) {
+                    console.error(`Recent purchases API returned ${response.status}`);
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                // Check content type before parsing JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    console.error('Recent purchases API returned non-JSON response');
+                    throw new Error('Not JSON response');
+                }
+                
+                const data = await response.json();
+                
+                const listEl = document.getElementById('purchasesList');
+                
+                if (data.success && data.purchases && data.purchases.length > 0) {
+                    listEl.innerHTML = data.purchases.map(purchase => `
+                        <div class="purchase-item">
+                            <div class="purchase-username">${purchase.username}</div>
+                            <div class="purchase-package">${purchase.package}</div>
+                            <div class="purchase-time">${purchase.time}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    listEl.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5); font-size: 13px;">
+                            Chưa có giao dịch
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading purchases:', error);
+                const listEl = document.getElementById('purchasesList');
+                if (listEl) {
+                    listEl.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5); font-size: 13px;">
+                            Không thể tải
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        async function checkUsername() {
+            const usernameInput = document.getElementById('username');
+            let username = usernameInput.value.trim();
+
+            if (!selectedPackageData) {
+                showStatus('❌ Vui lòng Chọn gói trước', 'error');
+                return;
+            }
+
+            if (!username) {
+                showStatus('❌ Vui lòng nhập username', 'error');
+                return;
+            }
+
+            if (username.includes('locket.cam/')) {
+                username = username.split('locket.cam/')[1].split('?')[0];
+            }
+
+            hideStatus();
+            showLoading();
+
+            try {
+                // Use final price if voucher applied
+                const finalPrice = appliedVoucher ? appliedVoucher.final_price : selectedPackageData.price;
+                const voucherCode = appliedVoucher ? appliedVoucher.code : null;
+
+                const response = await fetch('/api/locket/check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        username,
+                        package: selectedPackageData.type,
+                        price: finalPrice,
+                        voucher_code: voucherCode,
+                        discount_amount: appliedVoucher ? appliedVoucher.discount_amount : 0
+                    })
+                });
+
+                const data = await response.json();
+                hideLoading();
+
+                if (data.success) {
+                    // If price is 0 (100% discount), activate immediately
+                    if (finalPrice === 0) {
+                        showStatus('🎉 Miễn phí 100%! Đang kích hoạt...', 'info');
+                        activateLocket(username, data.session_id);
+                    } else if (data.needs_payment) {
+                        window.location.href = `/locket-payment.html?session=${data.session_id}`;
+                    } else {
+                        showStatus('🎉 Đang kích hoạt lại miễn phí...', 'info');
+                        activateLocket(username, data.session_id);
+                    }
+                } else {
+                    showStatus(data.message || '❌ Có lỗi xảy ra', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                showStatus('❌ Lỗi kết nối. Vui lòng thử lại.', 'error');
+            }
+        }
+
+        async function activateLocket(username, session_id) {
+            showLoading();
+            
+            try {
+                const response = await fetch('/api/locket/activate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, session_id })
+                });
+
+                const data = await response.json();
+                hideLoading();
+
+                if (data.success) {
+                    // Check if redirect is provided (new success page flow)
+                    if (data.redirect) {
+                        showStatus('🎉 Kích hoạt thành công! Đang chuyển hướng...', 'success');
+                        setTimeout(() => {
+                            window.location.href = data.redirect;
+                        }, 1000);
+                        return;
+                    }
+                    
+                    // Legacy flow: show DNS instructions directly
+                    showStatus('🎉 Kích hoạt thành công!', 'success');
+                    
+                    if (data.dns_link) {
+                        setTimeout(() => {
+                            showDNSInstructions(data.dns_link, data.dns_profile_id);
+                        }, 1500);
+                    }
+                } else {
+                    showStatus(data.message || '❌ Kích hoạt thất bại', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                showStatus('❌ Lỗi kích hoạt. Vui lòng liên hệ admin.', 'error');
+            }
+        }
+
+        function showDNSInstructions(link, profileId) {
+            document.body.innerHTML = `
+                <div class="particles" id="particles2"></div>
+                <div class="container">
+                    <div class="header">
+                        <div class="logo">
+                            <div class="logo-icon">✅</div>
+                            <div class="logo-text">
+                                <h1>Kích hoạt thành công!</h1>
+                                <p style="color: #dc3545; font-weight: 600;">⚠️ BẮT BUỘC cài DNS ngay</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-container">
+                        <div class="payment-card">
+                            <h2 class="card-title">📱 iOS (iPhone/iPad)</h2>
+                            <div style="background: rgba(212, 175, 55, 0.1); padding: 18px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                                <ol style="color: rgba(255,255,255,0.9); font-size: 14px; padding-left: 20px; line-height: 1.8; margin: 0;">
+                                    <li>Bấm nút "Tải DNS Profile" bên dưới</li>
+                                    <li>Safari mở → Bấm "Cho phép"</li>
+                                    <li>Vào <strong>Cài đặt</strong> iPhone</li>
+                                    <li>Bấm <strong>"Đã tải xuống hồ sơ"</strong></li>
+                                    <li>Bấm <strong>"Cài đặt"</strong> → Nhập mật khẩu</li>
+                                    <li><strong>TẮT app Locket</strong> hoàn toàn</li>
+                                    <li><strong>MỞ lại</strong> → Kiểm tra Gold</li>
+                                </ol>
+                            </div>
+                            <a href="${link}" class="btn" style="display: block; text-decoration: none; text-align: center;">
+                                📥 Tải DNS Profile (iOS)
+                            </a>
+                        </div>
+
+                        <div class="payment-card">
+                            <h2 class="card-title">🤖 Android</h2>
+                            <div style="background: rgba(30, 30, 30, 0.8); padding: 18px; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 20px;">
+                                <p style="color: rgba(255,255,255,0.9); font-weight: 700; margin-bottom: 12px; font-size: 15px;">DNS Hostname:</p>
+                                <p style="background: rgba(212, 175, 55, 0.1); padding: 12px; border-radius: 8px; font-family: monospace; color: #d4af37; word-break: break-all; font-size: 13px; border: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 12px;">
+                                    ${profileId}.dns.nextdns.io
+                                </p>
+                                <ol style="color: rgba(255,255,255,0.8); font-size: 13px; padding-left: 20px; line-height: 1.7; margin: 0;">
+                                    <li>Vào <strong>Cài đặt</strong> → <strong>Mạng & Internet</strong></li>
+                                    <li>Bấm <strong>Private DNS</strong></li>
+                                    <li>Chọn <strong>"Private DNS provider hostname"</strong></li>
+                                    <li>Dán DNS ở trên → <strong>Lưu</strong></li>
+                                    <li><strong>TẮT app Locket</strong> → <strong>MỞ lại</strong></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-card" style="animation-delay: 0.3s;">
+                        <div style="background: rgba(220, 53, 69, 0.1); padding: 20px; border-radius: 14px; border: 1px solid rgba(220, 53, 69, 0.3);">
+                            <p style="color: #dc3545; font-weight: 800; margin-bottom: 12px; font-size: 16px;">⚠️ CỰC KỲ QUAN TRỌNG:</p>
+                            <ul style="color: rgba(255,255,255,0.9); font-size: 14px; padding-left: 20px; line-height: 1.8; margin: 0;">
+                                <li><strong>PHẢI cài DNS trong 5 phút</strong></li>
+                                <li>Không cài DNS → <strong>Gold sẽ mất</strong></li>
+                                <li>Sau khi cài → <strong>TẮT và MỞ lại app</strong></li>
+                                <li>Mất Gold → Xóa DNS → Kích hoạt lại</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-secondary" onclick="window.location.reload()" style="margin-top: 20px;">
+                            ← Quay lại trang chủ
+                        </button>
+                    </div>
+                </div>
+            `;
+            createParticles();
+        }
+
+        // Version Banner Functions - REMOVED (banner is now permanent)
+        // No close button, banner stays visible
+
+        // Visitor Tracking
+        (function() {
+            const sessionId = localStorage.getItem('visitor_session_id') || 
+                             'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('visitor_session_id', sessionId);
+
+            async function trackVisitor() {
+                try {
+                    await fetch('/api/track-visitor', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            session_id: sessionId,
+                            page_url: window.location.href,
+                            page_title: document.title
+                        })
+                    });
+                } catch (e) { console.error('Tracking error:', e); }
+            }
+
+            // Track immediately
+            trackVisitor();
+            
+            // Send heartbeat every 30 seconds to keep session active
+            setInterval(trackVisitor, 30000);
+
+            // Track when page becomes visible again
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) trackVisitor();
+            });
+            
+            // Mark as inactive when user leaves (best effort)
+            window.addEventListener('beforeunload', () => {
+                // Use sendBeacon for reliable delivery
+                const data = JSON.stringify({
+                    session_id: sessionId,
+                    page_url: window.location.href,
+                    page_title: document.title,
+                    leaving: true
+                });
+                navigator.sendBeacon('/api/track-visitor', data);
+            });
+        })();
+
+        // Visitor Counter Display
+        (function() {
+            async function updateVisitorCount() {
+                try {
+                    const response = await fetch('/api/visitor-stats');
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.stats) {
+                            const count = data.stats.active_now || 0;
+                            const countEl = document.getElementById('visitorCount');
+                            if (countEl) {
+                                countEl.textContent = count;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error fetching visitor count:', e);
+                }
+            }
+
+            // Update immediately
+            updateVisitorCount();
+            
+            // Update every 10 seconds
+            setInterval(updateVisitorCount, 10000);
+        })();
+
+        createParticles();
+        loadRecentPurchases();
+        
+        // Refresh purchases every 30 seconds
+        setInterval(loadRecentPurchases, 30000);
+
+        // Auto-activate after successful payment
+        (function checkAutoActivate() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const sessionId = urlParams.get('session');
+                const success = urlParams.get('success');
+                
+                if (sessionId && success === 'true') {
+                    console.log('🎉 Auto-activating after payment success');
+                    
+                    // Show loading state
+                    showStatus('🎉 Thanh toán thành công! Đang kích hoạt...', 'info');
+                    showLoading();
+                    
+                    // Get session from locket_sessions table via API
+                    fetch(`/api/locket/session/${sessionId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.session && data.session.username) {
+                                // Activate with username from session
+                                activateLocket(data.session.username, sessionId);
+                            } else {
+                                hideLoading();
+                                showStatus('❌ Không tìm thấy thông tin session', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error getting session info:', error);
+                            hideLoading();
+                            showStatus('❌ Lỗi kích hoạt. Vui lòng liên hệ admin.', 'error');
+                        });
+                    
+                    // Clean URL (remove success parameter)
+                    const newUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, newUrl);
+                }
+            } catch (error) {
+                console.error('Error in auto-activate:', error);
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Verification Status - Real-time Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a1a1a 0%, #1a2f2f 30%, #0f2020 70%, #0a1515 100%);
+            min-height: 100vh;
+            color: #e8f4f0;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            cursor: url('/admin-dashboard/assets/cursor.png'), auto;
+        }
+        
+        /* Dalat/Sapa mountain mist effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(180deg, rgba(200, 220, 230, 0.08) 0%, transparent 100%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(0deg, rgba(100, 150, 120, 0.1) 0%, transparent 100%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        /* Custom cursor for interactive elements */
+        a, button, .viz-cell, .stat-card, .legend-item {
+            cursor: url('/admin-dashboard/assets/cursorhover.png'), pointer;
+        }
+
+        /* Animated background stars - soft golden sparkles */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #a8d5ba;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+            box-shadow: 0 0 4px #a8d5ba;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Floating shapes background - Dalat/Sapa nature themed */
+        .floating-shape {
+            position: absolute;
+            opacity: 0.06;
+            animation: float-shape 25s infinite ease-in-out;
+        }
+
+        .floating-shape.circle {
+            border-radius: 50%;
+            background: radial-gradient(circle, #7fb3a0, #5a9b85);
+        }
+
+        .floating-shape.square {
+            border-radius: 8px;
+            background: linear-gradient(45deg, #4a7c6b, #3a6b5a);
+        }
+
+        .floating-shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 52px solid rgba(127, 179, 160, 0.2);
+        }
+        
+        @keyframes float-shape {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-100px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(-50px) rotate(180deg);
+            }
+            75% {
+                transform: translateY(-150px) rotate(270deg);
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #7fb3a0, #a8d5ba, #5a9b85);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px rgba(127, 179, 160, 0.3));
+        }
+
+        .header p {
+            color: #a8d5ba;
+            font-size: 16px;
+            text-shadow: 0 0 5px rgba(127, 179, 160, 0.3);
+        }
+
+        /* Announcement Box */
+        .announcement-box {
+            background: rgba(20, 35, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(127, 179, 160, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            animation: slideDown 0.5s ease-out;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .announcement-box.info {
+            border-left: 4px solid #60a5fa;
+        }
+
+        .announcement-box.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .announcement-box.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .announcement-box.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .announcement-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .announcement-content {
+            flex: 1;
+            color: #f5e6d3;
+        }
+
+        .announcement-content p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(74, 124, 107, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 16px;
+            border: 1px solid rgba(127, 179, 160, 0.4);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(127, 179, 160, 0.2);
+        }
+
+        .live-indicator.maintenance {
+            background: rgba(107, 74, 74, 0.3);
+            border-color: rgba(220, 20, 60, 0.5);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #2dd4bf;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            transition: background 0.3s ease;
+            box-shadow: 0 0 6px #2dd4bf;
+        }
+
+        .live-indicator.maintenance .live-dot {
+            background: #f87171;
+            box-shadow: 0 0 6px #f87171;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .stat-card {
+            background: rgba(20, 35, 35, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(127, 179, 160, 0.2);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(74, 124, 107, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color) 0%, transparent 70%);
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover::after {
+            width: 300px;
+            height: 300px;
+            opacity: 0.1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px var(--color-glow);
+            border-color: var(--color);
+        }
+
+        .stat-card.success { 
+            --color: #2dd4bf; 
+            --color-glow: rgba(45, 212, 191, 0.4);
+        }
+        .stat-card.rejected { 
+            --color: #fb923c; 
+            --color-glow: rgba(251, 146, 60, 0.4);
+        }
+        .stat-card.failed { 
+            --color: #f87171; 
+            --color-glow: rgba(248, 113, 113, 0.4);
+        }
+        .stat-card.cancelled { 
+            --color: #94a3b8; 
+            --color-glow: rgba(148, 163, 184, 0.4);
+        }
+        .stat-card.invalid_link { 
+            --color: #c084fc; 
+            --color-glow: rgba(192, 132, 252, 0.4);
+        }
+        .stat-card.processing { 
+            --color: #60a5fa; 
+            --color-glow: rgba(96, 165, 250, 0.4);
+        }
+
+        /* Glowing effect - subtle */
+        .stat-card.success {
+            box-shadow: 0 0 20px rgba(45, 212, 191, 0.2);
+        }
+
+        .stat-card.rejected {
+            box-shadow: 0 0 20px rgba(251, 146, 60, 0.2);
+        }
+
+        .stat-card.failed {
+            box-shadow: 0 0 20px rgba(248, 113, 113, 0.2);
+        }
+
+        .stat-card.cancelled {
+            box-shadow: 0 0 20px rgba(148, 163, 184, 0.2);
+        }
+
+        .stat-card.invalid_link {
+            box-shadow: 0 0 20px rgba(192, 132, 252, 0.2);
+        }
+
+        .stat-card.processing {
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.2);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a8d5ba;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(127, 179, 160, 0.3);
+        }
+
+        .stat-value {
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--color);
+            line-height: 1;
+            animation: countUp 0.8s ease-out;
+            position: relative;
+            text-shadow: 0 0 20px var(--color-glow);
+        }
+
+        /* Increment indicator */
+        .increment-indicator {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            animation: flyUp 1s ease-out forwards;
+            pointer-events: none;
+            box-shadow: 0 0 20px var(--color-glow);
+        }
+
+        @keyframes flyUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(1.2);
+            }
+        }
+
+        /* Floating +1 animation on grid cells - soft green */
+        .cell-increment {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #a8d5ba;
+            font-size: 20px;
+            font-weight: 900;
+            pointer-events: none;
+            animation: floatUp 2s ease-out forwards;
+            text-shadow: 0 0 8px rgba(127, 179, 160, 0.6);
+            z-index: 100;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -100%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -150%) scale(0.8);
+            }
+        }
+
+        /* Firework particles */
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--color);
+            pointer-events: none;
+            animation: explode 0.8s ease-out forwards;
+            box-shadow: 0 0 10px var(--color);
+        }
+
+        @keyframes explode {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        /* Cell firework animation - explode then float down with physics */
+        @keyframes cellFireworkFall {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            15% {
+                opacity: 1;
+                transform: translate(var(--tx), var(--ty)) scale(1.3) rotate(var(--rotation));
+            }
+            30% {
+                opacity: 0.95;
+                transform: translate(calc(var(--tx) + var(--drift) * 0.2), calc(var(--ty) + 80px)) scale(1.1) rotate(calc(var(--rotation) * 2));
+            }
+            50% {
+                opacity: 0.8;
+                transform: translate(calc(var(--tx) + var(--drift) * 0.5), calc(var(--ty) + 200px)) scale(0.9) rotate(calc(var(--rotation) * 3));
+            }
+            70% {
+                opacity: 0.5;
+                transform: translate(calc(var(--tx) + var(--drift) * 0.8), calc(var(--ty) + 350px)) scale(0.7) rotate(calc(var(--rotation) * 4));
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(var(--tx) + var(--drift)), var(--fall)) scale(0.3) rotate(calc(var(--rotation) * 6));
+            }
+        }
+
+        /* Large +1 animation for cell transitions */
+        @keyframes cellPlusOneFloat {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.3);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.3);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -80px) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -120px) scale(0.8);
+            }
+        }
+
+        /* Smooth morphing transition for cells - processing to success */
+        .viz-cell.transitioning {
+            animation: successCelebration 2.5s cubic-bezier(0.2, 0, 0.8, 1) forwards;
+            z-index: 100;
+        }
+
+        @keyframes successCelebration {
+            /* Phase 1: Gentle grow and color shift (0-60%) - VERY SLOW */
+            0% {
+                background: rgba(59, 130, 246, 0.8);
+                box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+                transform: scale(1) rotate(0deg);
+                filter: brightness(1);
+            }
+            30% {
+                background: rgba(40, 160, 200, 0.85);
+                box-shadow: 0 0 25px rgba(40, 160, 200, 0.7);
+                transform: scale(1.4) rotate(-3deg);
+                filter: brightness(1.2);
+            }
+            60% {
+                background: rgba(20, 190, 160, 0.9);
+                box-shadow: 0 0 40px rgba(20, 190, 160, 0.8);
+                transform: scale(1.9) rotate(6deg);
+                filter: brightness(1.6);
+            }
+            
+            /* Phase 2: Bright flash (60-65%) - INSTANT */
+            65% {
+                background: rgba(45, 212, 191, 1);
+                box-shadow: 0 0 70px rgba(45, 212, 191, 1), 0 0 100px rgba(45, 212, 191, 0.8);
+                transform: scale(2.3) rotate(10deg);
+                filter: brightness(3) saturate(2);
+            }
+            
+            /* Phase 3: Snap back with shake (65-72%) - VERY FAST */
+            72% {
+                background: rgba(45, 212, 191, 0.85);
+                box-shadow: 0 0 18px rgba(45, 212, 191, 0.7);
+                transform: scale(1.02) rotate(-0.5deg);
+                filter: brightness(1.1);
+            }
+            
+            /* Phase 4: Settle with wobble (72-100%) - SMOOTH */
+            76% {
+                transform: scale(0.97) rotate(1.5deg);
+            }
+            80% {
+                transform: scale(1.03) rotate(-1deg);
+            }
+            84% {
+                transform: scale(0.99) rotate(0.5deg);
+            }
+            88% {
+                transform: scale(1.01) rotate(-0.3deg);
+            }
+            94% {
+                transform: scale(1.005) rotate(0.1deg);
+            }
+            100% {
+                background: rgba(45, 212, 191, 0.8);
+                box-shadow: 0 0 12px rgba(45, 212, 191, 0.6);
+                transform: scale(1) rotate(0deg);
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Visualization */
+        .visualization {
+            background: rgba(20, 35, 35, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(127, 179, 160, 0.2);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+            box-shadow: 0 0 15px rgba(74, 124, 107, 0.2);
+        }
+
+        .viz-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .viz-header i {
+            font-size: 24px;
+            color: #a8d5ba;
+            text-shadow: 0 0 8px rgba(127, 179, 160, 0.5);
+        }
+
+        .viz-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #a8d5ba;
+            text-shadow: 0 0 5px rgba(127, 179, 160, 0.3);
+        }
+
+        .viz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .viz-cell {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(148, 163, 184, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 0 12px transparent;
+        }
+
+        .viz-cell:hover {
+            transform: scale(1.2);
+            z-index: 10;
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .viz-cell.success { 
+            background: #2dd4bf; 
+            box-shadow: 0 0 12px rgba(45, 212, 191, 0.7);
+        }
+        .viz-cell.rejected { 
+            background: #fb923c; 
+            box-shadow: 0 0 12px rgba(251, 146, 60, 0.7);
+        }
+        .viz-cell.failed { 
+            background: #f87171; 
+            box-shadow: 0 0 12px rgba(248, 113, 113, 0.7);
+        }
+        .viz-cell.cancelled { 
+            background: #94a3b8; 
+            box-shadow: 0 0 12px rgba(148, 163, 184, 0.7);
+        }
+        .viz-cell.invalid_link { 
+            background: #c084fc; 
+            box-shadow: 0 0 12px rgba(192, 132, 252, 0.7);
+        }
+        .viz-cell.processing { 
+            background: #60a5fa; 
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.7);
+            animation: processingPulse 2s infinite;
+        }
+
+        @keyframes processingPulse {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 12px rgba(96, 165, 250, 0.7);
+            }
+            50% {
+                opacity: 0.6;
+                box-shadow: 0 0 20px rgba(96, 165, 250, 1);
+            }
+        }
+
+        /* New cell animation */
+        .viz-cell.new {
+            animation: cellPop 0.5s ease-out;
+        }
+
+        @keyframes cellPop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.5);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .viz-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 12px;
+            background: rgba(20, 35, 35, 0.4);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(127, 179, 160, 0.2);
+        }
+        
+        .legend-item:hover {
+            transform: scale(1.1);
+            background: rgba(20, 35, 35, 0.6);
+            box-shadow: 0 0 15px rgba(127, 179, 160, 0.3);
+        }
+        
+        .legend-item.success {
+            color: #2dd4bf;
+        }
+        
+        .legend-item.rejected {
+            color: #fb923c;
+        }
+        
+        .legend-item.failed {
+            color: #f87171;
+        }
+        
+        .legend-item.cancelled {
+            color: #94a3b8;
+        }
+        
+        .legend-item.invalid_link {
+            color: #c084fc;
+        }
+        
+        .legend-item.processing {
+            color: #60a5fa;
+        }
+
+        .legend-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            box-shadow: 0 0 15px currentColor;
+            transition: all 0.3s ease;
+        }
+        
+        .legend-item:hover .legend-dot {
+            transform: scale(1.3);
+            box-shadow: 0 0 25px currentColor;
+        }
+        
+        .legend-dot.success {
+            background: #2dd4bf;
+        }
+        
+        .legend-dot.rejected {
+            background: #fb923c;
+        }
+        
+        .legend-dot.failed {
+            background: #f87171;
+        }
+        
+        .legend-dot.cancelled {
+            background: #94a3b8;
+        }
+        
+        .legend-dot.invalid_link {
+            background: #c084fc;
+        }
+        
+        .legend-dot.processing {
+            background: #60a5fa;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 8px;
+            background: rgba(148, 163, 184, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 24px;
+            margin-bottom: 24px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            display: flex;
+            transition: all 0.5s ease;
+        }
+
+        .progress-segment {
+            transition: width 0.5s ease;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+
+        .loading i {
+            font-size: 32px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-value {
+                font-size: 36px;
+            }
+
+            .jobs-table {
+                font-size: 12px;
+            }
+
+            .jobs-table th,
+            .jobs-table td {
+                padding: 8px;
+            }
+
+            .link-preview {
+                max-width: 150px;
+            }
+        }
+
+        /* Last update time */
+        .last-update {
+            text-align: center;
+            color: #a8d5ba;
+            font-size: 13px;
+            margin-top: 20px;
+            text-shadow: 0 0 5px rgba(127, 179, 160, 0.3);
+        }
+
+        /* Start Bot Button - Dalat/Sapa nature themed */
+        .bot-button-container {
+            text-align: center;
+            margin: 40px 0 20px 0;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+
+        .start-bot-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(74, 124, 107, 0.6), rgba(58, 107, 90, 0.6));
+            color: #a8d5ba;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(74, 124, 107, 0.3);
+            border: 1px solid rgba(127, 179, 160, 0.4);
+        }
+
+        .start-bot-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(74, 124, 107, 0.5), 0 0 20px rgba(127, 179, 160, 0.3);
+            background: linear-gradient(135deg, rgba(58, 107, 90, 0.7), rgba(74, 124, 107, 0.7));
+            border-color: rgba(127, 179, 160, 0.6);
+        }
+
+        .start-bot-btn i {
+            font-size: 24px;
+        }
+
+        .start-bot-btn .arrow {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .start-bot-btn:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        .bot-subtitle {
+            color: #d4af37;
+            font-size: 14px;
+            margin-top: 12px;
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            display: flex;
+            gap: 8px;
+            background: rgba(30, 20, 20, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 10px 14px;
+            border-radius: 24px;
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 175, 55, 0.2);
+        }
+        
+        .lang-btn {
+            padding: 10px 18px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            background: rgba(139, 0, 0, 0.3);
+            color: #d4af37;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(139, 0, 0, 0.6);
+            border-color: rgba(212, 175, 55, 0.7);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(212, 175, 55, 0.4);
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #8B0000;
+            border-color: #f4d03f;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
+            transform: scale(1.05);
+        }
+        
+        .lang-btn.active:hover {
+            transform: translateY(-3px) scale(1.05);
+        }
+        
+        .bot-subtitle {
+            color: #a8d5ba;
+            font-size: 14px;
+            margin-top: 12px;
+            text-shadow: 0 0 5px rgba(127, 179, 160, 0.3);
+        }
+        
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            display: flex;
+            gap: 8px;
+            background: rgba(20, 35, 35, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 10px 14px;
+            border-radius: 24px;
+            border: 2px solid rgba(127, 179, 160, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(127, 179, 160, 0.2);
+        }
+        
+        .lang-btn {
+            padding: 10px 18px;
+            border: 2px solid rgba(127, 179, 160, 0.3);
+            background: rgba(74, 124, 107, 0.3);
+            color: #a8d5ba;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px rgba(127, 179, 160, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(74, 124, 107, 0.6);
+            border-color: rgba(127, 179, 160, 0.7);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(127, 179, 160, 0.4);
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(135deg, #7fb3a0, #a8d5ba);
+            color: #0a1515;
+            border-color: #a8d5ba;
+            box-shadow: 0 0 25px rgba(127, 179, 160, 0.6);
+            transform: scale(1.05);
+        }
+        
+        .lang-btn.active:hover {
+            transform: translateY(-3px) scale(1.05);
+        }
+        
+        /* Red Envelope Styles - Single Floating Envelope */
+        .envelope {
+            width: 120px;
+            height: 160px;
+            position: fixed;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: envelopePop 0.8s ease-out, floatRandom 8s ease-in-out infinite;
+            filter: drop-shadow(0 8px 24px rgba(139, 0, 0, 0.5)) drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+            z-index: 1000;
+            pointer-events: auto;
+        }
+        
+        .envelope.fade-out {
+            animation: fadeOutSmooth 1s ease-out forwards;
+        }
+        
+        .envelope img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: all 0.5s ease;
+        }
+        
+        .envelope.opening img {
+            animation: openEnvelope 0.6s ease-out forwards;
+        }
+        
+        .envelope.opened {
+            animation: glowBurst 0.8s ease-out;
+        }
+        
+        .envelope .amount-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #8B0000;
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-size: 32px;
+            font-weight: 900;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border: 3px solid #8B0000;
+            pointer-events: none;
+            opacity: 0;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+        }
+        
+        .envelope .amount-label.show {
+            animation: revealAmount 0.6s ease-out 0.3s forwards;
+        }
+        
+        .envelope:hover {
+            transform: scale(1.15) rotate(3deg);
+            filter: drop-shadow(0 12px 32px rgba(139, 0, 0, 0.7)) drop-shadow(0 0 40px rgba(212, 175, 55, 0.5)) brightness(1.2);
+        }
+        
+        .envelope:hover img {
+            transform: rotate(5deg);
+        }
+        
+        @keyframes envelopePop {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.3) rotate(10deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOutSmooth {
+            0% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.5) translateY(-50px);
+            }
+        }
+        
+        @keyframes floatRandom {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(30px, -20px) rotate(5deg);
+            }
+            50% {
+                transform: translate(-20px, 10px) rotate(-5deg);
+            }
+            75% {
+                transform: translate(15px, -15px) rotate(3deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+        }
+        
+        @keyframes openEnvelope {
+            0% {
+                transform: rotateY(0deg) scale(1);
+            }
+            50% {
+                transform: rotateY(90deg) scale(1.2);
+            }
+            100% {
+                transform: rotateY(180deg) scale(1.3);
+            }
+        }
+        
+        @keyframes glowBurst {
+            0% {
+                filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5)) brightness(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 80px rgba(212, 175, 55, 1)) drop-shadow(0 0 120px rgba(255, 215, 0, 0.8)) brightness(2);
+                transform: scale(1.4);
+            }
+            100% {
+                filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6)) brightness(1.2);
+                transform: scale(1.3);
+            }
+        }
+        
+        @keyframes revealAmount {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0) rotate(-180deg);
+            }
+            60% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.3) rotate(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+        }
+        
+        /* Claim Modal */
+        .claim-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .claim-modal-content {
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.9), rgba(107, 0, 0, 0.9));
+            border: 3px solid #d4af37;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.6);
+            animation: modalPop 0.5s ease-out;
+        }
+        
+        .claim-modal h2 {
+            color: #d4af37;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+        }
+        
+        .claim-modal .amount-display {
+            font-size: 64px;
+            font-weight: 900;
+            color: #f4d03f;
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(244, 208, 63, 0.8);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .claim-modal input {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #f5e6d3;
+            margin: 20px 0;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .claim-modal input:focus {
+            border-color: #f4d03f;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+        
+        .claim-modal button {
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .claim-modal .btn-claim {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #8B0000;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.5);
+        }
+        
+        .claim-modal .btn-claim:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(212, 175, 55, 0.7);
+        }
+        
+        .claim-modal .btn-cancel {
+            background: rgba(148, 163, 184, 0.3);
+            color: #f5e6d3;
+        }
+        
+        .claim-modal .btn-cancel:hover {
+            background: rgba(148, 163, 184, 0.5);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.5) rotate(-10deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.1) rotate(5deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        
+        /* Alert Popup Modal */
+        .alert-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10002;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .alert-popup-content {
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.95), rgba(107, 0, 0, 0.95));
+            border: 3px solid #d4af37;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.6);
+            animation: modalPop 0.5s ease-out;
+            position: relative;
+        }
+        
+        .alert-popup-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .alert-popup-title {
+            color: #d4af37;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+        }
+        
+        .alert-popup-message {
+            color: #f5e6d3;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            white-space: pre-line;
+        }
+        
+        .alert-popup-btn {
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #8B0000;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.5);
+        }
+        
+        .alert-popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(212, 175, 55, 0.7);
+        }
+        
+        .claim-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: rgba(139, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .claim-entry:hover {
+            background: rgba(139, 0, 0, 0.3);
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateX(5px);
+        }
+        
+        .claim-entry .masked-user {
+            color: #d4af37;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .claim-entry .reward-amount {
+            color: #10b981;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .no-envelopes {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-size: 16px;
+        }
+        
+        .no-claims {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        
+        /* Fireworks effect - physics-based floating confetti */
+        .firework-particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: firework-explode-float 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            opacity: 1;
+            box-shadow: 0 0 10px currentColor;
+        }
+        
+        @keyframes firework-explode-float {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            15% {
+                opacity: 1;
+                transform: translate(var(--tx), var(--ty)) scale(1.2) rotate(var(--rotation));
+            }
+            30% {
+                opacity: 0.9;
+                transform: translate(calc(var(--tx) + var(--drift-x) * 0.3), calc(var(--ty) + 50px)) scale(1) rotate(calc(var(--rotation) * 2));
+            }
+            50% {
+                opacity: 0.7;
+                transform: translate(calc(var(--tx) + var(--drift-x) * 0.6), calc(var(--ty) + 150px)) scale(0.9) rotate(calc(var(--rotation) * 3));
+            }
+            70% {
+                opacity: 0.5;
+                transform: translate(calc(var(--tx) + var(--drift-x)), calc(var(--ty) + 300px)) scale(0.7) rotate(calc(var(--rotation) * 4));
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(var(--tx) + var(--drift-x) * 1.2), calc(var(--ty) + 500px)) scale(0.3) rotate(calc(var(--rotation) * 5));
+            }
+        }
+        
+        /* Success confetti burst - simple and snappy */
+        .success-confetti {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        @keyframes confettiBurst {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0.3);
+            }
+        }
+        
+        /* Floating +1 animation for success */
+        @keyframes floatUpSuccess {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            15% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.3);
+            }
+            40% {
+                opacity: 1;
+                transform: translate(-50%, -70px) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -110px) scale(0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="lang-btn active" onclick="switchLanguage('vi')" data-lang="vi">🇻🇳 Việt</button>
+        <button class="lang-btn" onclick="switchLanguage('en')" data-lang="en">🇬🇧 English</button>
+        <button class="lang-btn" onclick="switchLanguage('zh')" data-lang="zh">🇨🇳 中文</button>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 id="pageTitle">Gemini Verification Status</h1>
+            <p data-i18n="realtime-desc">Real-time verification results • Last 30 minutes</p>
+            <div class="live-indicator" id="liveIndicator">
+                <div class="live-dot"></div>
+                <span id="liveText" data-i18n="live">Live</span>
+            </div>
+        </div>
+
+        <!-- Announcement Box -->
+        <div class="announcement-box" id="announcementBox" style="display: none;">
+            <div class="announcement-icon">📢</div>
+            <div class="announcement-content">
+                <p id="announcementText"></p>
+            </div>
+        </div>
+
+        <!-- Daily Gemini Stats Section - Summary for Today -->
+        <div class="visualization" id="dailyStatsSection">
+            <div class="viz-header">
+                <i class="fas fa-calendar-day"></i>
+                <h2 data-i18n="daily-stats-title">Thống Kê Gemini Hôm Nay</h2>
+            </div>
+            
+            <div class="stats-grid" style="margin-bottom: 0;">
+                <div class="stat-card" style="--color: #60a5fa; --color-glow: rgba(96, 165, 250, 0.4);">
+                    <div class="stat-label" data-i18n="daily-total">Tổng Verify</div>
+                    <div class="stat-value" id="dailyTotalCount">0</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label" data-i18n="daily-success">Thành Công</div>
+                    <div class="stat-value" id="dailySuccessCount">0</div>
+                </div>
+                <div class="stat-card" style="--color: #ef4444; --color-glow: rgba(239, 68, 68, 0.4);">
+                    <div class="stat-label" data-i18n="daily-failed">Thất Bại + Hủy</div>
+                    <div class="stat-value" id="dailyFailedCount">0</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px; padding: 16px; background: rgba(212, 175, 55, 0.08); border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.2);">
+                <p style="color: #d4af37; font-size: 14px; margin: 0;">
+                    <i class="fas fa-clock"></i> <span data-i18n="daily-timezone">Theo giờ Việt Nam (UTC+7) • Cập nhật:</span> <span id="dailyStatsUpdate">--:--:--</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Stats Grid (Last 30 Minutes) -->
+        <div class="stats-grid">
+            <div class="stat-card success">
+                <div class="stat-label" data-i18n="stat-success">Success</div>
+                <div class="stat-value" id="successCount">0</div>
+            </div>
+            <div class="stat-card rejected">
+                <div class="stat-label" data-i18n="stat-rejected">Rejected</div>
+                <div class="stat-value" id="rejectedCount">0</div>
+            </div>
+            <div class="stat-card failed">
+                <div class="stat-label" data-i18n="stat-failed">Failed</div>
+                <div class="stat-value" id="failedCount">0</div>
+            </div>
+            <div class="stat-card cancelled">
+                <div class="stat-label" data-i18n="stat-cancelled">Cancelled</div>
+                <div class="stat-value" id="cancelledCount">0</div>
+            </div>
+            <div class="stat-card processing">
+                <div class="stat-label" data-i18n="stat-processing">Processing</div>
+                <div class="stat-value" id="processingCount">0</div>
+            </div>
+        </div>
+
+        <!-- Visualization -->
+        <div class="visualization">
+            <div class="viz-header">
+                <i class="fas fa-chart-bar"></i>
+                <h2 data-i18n="viz-title">Verification Results</h2>
+            </div>
+            
+            <div class="viz-grid" id="vizGrid"></div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="viz-legend">
+                <div class="legend-item success">
+                    <div class="legend-dot success"></div>
+                    <span data-i18n="legend-success">Success</span>
+                </div>
+                <div class="legend-item rejected">
+                    <div class="legend-dot rejected"></div>
+                    <span data-i18n="legend-rejected">Rejected</span>
+                </div>
+                <div class="legend-item failed">
+                    <div class="legend-dot failed"></div>
+                    <span data-i18n="legend-failed">Failed</span>
+                </div>
+                <div class="legend-item cancelled">
+                    <div class="legend-dot cancelled"></div>
+                    <span data-i18n="legend-cancelled">Cancelled</span>
+                </div>
+                <div class="legend-item processing">
+                    <div class="legend-dot processing"></div>
+                    <span data-i18n="legend-processing">Processing</span>
+                </div>
+            </div>
+
+            <div class="last-update" id="lastUpdate">Last updated: --:--:-- PM</div>
+        </div>
+
+
+
+        <!-- Start Bot Button -->
+        <div class="bot-button-container">
+            <a href="https://t.me/SheerID_VIP_Bot" target="_blank" class="start-bot-btn">
+                <i class="fab fa-telegram"></i>
+                <span>Start Verification Bot</span>
+                <span class="arrow">→</span>
+            </a>
+            <p class="bot-subtitle">Auto-refreshes every 10 seconds</p>
+        </div>
+    </div>
+
+    <script>
+        // ===== MULTILINGUAL SYSTEM =====
+        let currentLang = localStorage.getItem('lang') || 'vi';
+        
+        const translations = {
+            vi: {
+                'realtime-desc': 'Kết quả xác minh theo thời gian thực • 30 phút gần đây',
+                'live': 'Trực tiếp',
+                'maintenance': 'Bảo trì',
+                'daily-stats-title': 'Thống Kê Gemini Hôm Nay',
+                'daily-total': 'Tổng Verify',
+                'daily-success': 'Thành Công',
+                'daily-failed': 'Thất Bại + Hủy',
+                'daily-timezone': 'Cập nhật:',
+                'stat-success': 'Thành công',
+                'stat-rejected': 'Bị từ chối',
+                'stat-failed': 'Thất bại',
+                'stat-cancelled': 'Đã hủy',
+                'stat-processing': 'Đang xử lý',
+                'legend-success': 'Thành công',
+                'legend-rejected': 'Bị từ chối',
+                'legend-failed': 'Thất bại',
+                'legend-cancelled': 'Đã hủy',
+                'legend-processing': 'Đang xử lý',
+                'viz-title': 'Kết quả xác minh',
+                'alert-empty-id': '⚠️ Vui lòng nhập Telegram ID của bạn!',
+                'alert-invalid-id': '⚠️ Telegram ID phải là số! (ví dụ: 123456789)',
+                'btn-processing': '⏳ Đang xử lý...',
+                'alert-success': '🎉 Thành công!\n\n✅ Đã nhận {amount} cash!\n💰 Số dư mới: {balance} cash\n\n📱 Kiểm tra Telegram để xem thông báo!',
+                'alert-error': '❌ Lỗi: {error}\n\nVui lòng thử lại hoặc liên hệ admin.',
+                'alert-network-error': '❌ Có lỗi xảy ra khi claim. Vui lòng thử lại sau.',
+                'alert-already-claimed': '⏰ Bạn đã nhận bao lì xì hôm nay rồi!\n\nQuay lại vào ngày mai nhé 😊',
+                'alert-btn-ok': 'OK'
+            },
+            en: {
+                'realtime-desc': 'Real-time verification results • Last 30 minutes',
+                'live': 'Live',
+                'maintenance': 'Maintenance',
+                'daily-stats-title': 'Gemini Stats Today',
+                'daily-total': 'Total Verify',
+                'daily-success': 'Success',
+                'daily-failed': 'Failed + Cancelled',
+                'daily-timezone': 'Updated:',
+                'stat-success': 'Success',
+                'stat-rejected': 'Rejected',
+                'stat-failed': 'Failed',
+                'stat-cancelled': 'Cancelled',
+                'stat-processing': 'Processing',
+                'legend-success': 'Success',
+                'legend-rejected': 'Rejected',
+                'legend-failed': 'Failed',
+                'legend-cancelled': 'Cancelled',
+                'legend-processing': 'Processing',
+                'viz-title': 'Verification Results',
+                'alert-empty-id': '⚠️ Please enter your Telegram ID!',
+                'alert-invalid-id': '⚠️ Telegram ID must be numbers! (e.g.: 123456789)',
+                'btn-processing': '⏳ Processing...',
+                'alert-success': '🎉 Success!\n\n✅ Received {amount} cash!\n💰 New balance: {balance} cash\n\n📱 Check Telegram for notification!',
+                'alert-error': '❌ Error: {error}\n\nPlease try again or contact admin.',
+                'alert-network-error': '❌ An error occurred while claiming. Please try again later.',
+                'alert-already-claimed': '⏰ You already claimed a red envelope today!\n\nCome back tomorrow 😊',
+                'alert-btn-ok': 'OK'
+            },
+            zh: {
+                'realtime-desc': '实时验证结果 • 最近10分钟',
+                'live': '直播',
+                'maintenance': '维护中',
+                'daily-stats-title': '今日 Gemini 统计',
+                'daily-total': '总验证',
+                'daily-success': '成功',
+                'daily-failed': '失败 + 取消',
+                'daily-timezone': '更新：',
+                'stat-success': '成功',
+                'stat-rejected': '被拒绝',
+                'stat-failed': '失败',
+                'stat-cancelled': '已取消',
+                'stat-processing': '处理中',
+                'legend-success': '成功',
+                'legend-rejected': '被拒绝',
+                'legend-failed': '失败',
+                'legend-cancelled': '已取消',
+                'legend-processing': '处理中',
+                'viz-title': '验证结果',
+                'alert-empty-id': '⚠️ 请输入您的 Telegram ID！',
+                'alert-invalid-id': '⚠️ Telegram ID 必须是数字！(例如：123456789)',
+                'btn-processing': '⏳ 处理中...',
+                'alert-success': '🎉 成功！\n\n✅ 已领取 {amount} cash！\n💰 新余额：{balance} cash\n\n📱 查看 Telegram 通知！',
+                'alert-error': '❌ 错误：{error}\n\n请重试或联系管理员。',
+                'alert-network-error': '❌ 领取时发生错误。请稍后重试。',
+                'alert-already-claimed': '⏰ 您今天已经领取过红包了！\n\n明天再来吧 😊',
+                'alert-btn-ok': '确定'
+            }
+        };
+        
+        function t(key, params = {}) {
+            let text = translations[currentLang][key] || translations['vi'][key] || key;
+            // Replace parameters
+            Object.keys(params).forEach(param => {
+                text = text.replace(`{${param}}`, params[param]);
+            });
+            return text;
+        }
+        
+        // Custom alert popup (replaces browser alert)
+        function showAlert(message, icon = '🎉', title = '') {
+            // Remove existing alert if any
+            const existingAlert = document.querySelector('.alert-popup');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert-popup';
+            alertDiv.innerHTML = `
+                <div class="alert-popup-content">
+                    <div class="alert-popup-icon">${icon}</div>
+                    ${title ? `<div class="alert-popup-title">${title}</div>` : ''}
+                    <div class="alert-popup-message">${message}</div>
+                    <button class="alert-popup-btn" onclick="closeAlert()">${t('alert-btn-ok')}</button>
+                </div>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Close on background click
+            alertDiv.onclick = (e) => {
+                if (e.target === alertDiv) {
+                    closeAlert();
+                }
+            };
+        }
+        
+        window.closeAlert = function() {
+            const alert = document.querySelector('.alert-popup');
+            if (alert) {
+                alert.remove();
+            }
+        };
+        
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Update all i18n elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = t(key);
+            });
+        }
+        
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            switchLanguage(currentLang);
+        });
+        
+        // ===== END MULTILINGUAL SYSTEM =====
+
+        // Get verification type from URL
+        function getVerificationType() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('type') || 'gemini';
+        }
+
+        const verificationType = getVerificationType();
+
+        // Update page title based on type
+        const typeNames = {
+            'gemini': 'Gemini',
+            'perplexity': 'Perplexity',
+            'teacher': 'Teacher'
+        };
+        document.title = `${typeNames[verificationType] || 'Gemini'} Verification Status - Real-time Monitor`;
+
+        // Update page header
+        const pageTitle = document.getElementById('pageTitle');
+        if (pageTitle) {
+            pageTitle.textContent = `${typeNames[verificationType] || 'Gemini'} Verification Status`;
+        }
+
+        // Generate stars background
+        function generateStars() {
+            const starsContainer = document.getElementById('stars');
+            
+            // Generate twinkling soft green stars
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+            
+            // Generate floating shapes - nature themed
+            const shapes = ['circle', 'square'];
+            
+            for (let i = 0; i < 15; i++) {
+                const shape = document.createElement('div');
+                const shapeType = shapes[Math.floor(Math.random() * shapes.length)];
+                shape.className = `floating-shape ${shapeType}`;
+                
+                const size = 30 + Math.random() * 50;
+                shape.style.width = size + 'px';
+                shape.style.height = size + 'px';
+                
+                shape.style.left = Math.random() * 100 + '%';
+                shape.style.top = Math.random() * 100 + '%';
+                shape.style.animationDelay = Math.random() * 20 + 's';
+                shape.style.animationDuration = (15 + Math.random() * 10) + 's';
+                
+                starsContainer.appendChild(shape);
+            }
+        }
+
+        generateStars();
+        
+        // Create fireworks effect periodically - 3 fireworks at once with physics
+        function createFireworks() {
+            const colors = ['#7fb3a0', '#5a9b85', '#a8d5ba', '#4a7c6b', '#6bb89f'];
+            
+            // Create 3 fireworks at different positions
+            for (let fw = 0; fw < 3; fw++) {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight * 0.4;
+                
+                // More particles per firework (24 instead of 12)
+                for (let i = 0; i < 24; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'firework-particle';
+                    particle.style.left = x + 'px';
+                    particle.style.top = y + 'px';
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    // Make particles bigger with random sizes
+                    const size = 6 + Math.random() * 4;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    
+                    // Explosion direction
+                    const angle = (Math.PI * 2 * i) / 24;
+                    const velocity = 50 + Math.random() * 80;
+                    particle.style.setProperty('--tx', Math.cos(angle) * velocity + 'px');
+                    particle.style.setProperty('--ty', Math.sin(angle) * velocity + 'px');
+                    
+                    // Add horizontal drift (air resistance effect)
+                    const drift = (Math.random() - 0.5) * 100;
+                    particle.style.setProperty('--drift-x', drift + 'px');
+                    
+                    // Add random rotation
+                    const rotation = (Math.random() - 0.5) * 360;
+                    particle.style.setProperty('--rotation', rotation + 'deg');
+                    
+                    document.body.appendChild(particle);
+                    
+                    // Remove after animation completes (3s)
+                    setTimeout(() => particle.remove(), 3000);
+                }
+            }
+        }
+        
+        // Create colorful confetti burst on success (simple and beautiful)
+        function createSuccessConfetti(cell) {
+            const rect = cell.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Vibrant confetti colors matching the theme
+            const colors = ['#2dd4bf', '#60a5fa', '#fb923c', '#f87171', '#c084fc', '#ec4899', '#14b8a6', '#f97316'];
+            
+            // Create 16 confetti particles
+            for (let i = 0; i < 16; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'success-confetti';
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const angle = (Math.PI * 2 * i) / 16 + (Math.random() - 0.5) * 0.4;
+                const velocity = 40 + Math.random() * 30;
+                const size = 4 + Math.random() * 3;
+                
+                particle.style.cssText = `
+                    position: fixed;
+                    left: ${centerX}px;
+                    top: ${centerY}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                    border-radius: 50%;
+                    background: ${color};
+                    box-shadow: 0 0 8px ${color};
+                    pointer-events: none;
+                    z-index: 1000;
+                    animation: confettiBurst 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+                    --tx: ${Math.cos(angle) * velocity}px;
+                    --ty: ${Math.sin(angle) * velocity}px;
+                `;
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 800);
+            }
+            
+            // Add floating +1 text
+            const plusOne = document.createElement('div');
+            plusOne.textContent = '+1';
+            plusOne.style.cssText = `
+                position: fixed;
+                left: ${centerX}px;
+                top: ${centerY}px;
+                transform: translate(-50%, -50%);
+                font-size: 28px;
+                font-weight: 900;
+                color: #2dd4bf;
+                text-shadow: 0 0 10px rgba(45, 212, 191, 0.8), 0 0 20px rgba(45, 212, 191, 0.6);
+                pointer-events: none;
+                z-index: 1001;
+                animation: floatUpSuccess 1.2s ease-out forwards;
+            `;
+            
+            document.body.appendChild(plusOne);
+            setTimeout(() => plusOne.remove(), 1200);
+        }
+        
+        // Background fireworks disabled - only cell fireworks on success transitions
+
+        // Status mapping
+        function getStatusClass(status) {
+            if (status === 'completed' || status === 'success') return 'success';
+            if (status === 'fraud_reject') return 'rejected';
+            if (status === 'failed' || status === 'failure') return 'failed';
+            if (status === 'canceled' || status === 'cancelled') return 'cancelled';
+            if (status === 'invalid_link') return 'invalid_link';
+            if (status === 'processing' || status === 'pending') return 'processing';
+            return 'processing';
+        }
+
+        function getStatusText(status) {
+            if (status === 'completed' || status === 'success') return 'Success';
+            if (status === 'fraud_reject') return 'Rejected';
+            if (status === 'failed' || status === 'failure') return 'Failed';
+            if (status === 'canceled' || status === 'cancelled') return 'Cancelled';
+            if (status === 'invalid_link') return 'Invalid Link';
+            if (status === 'processing' || status === 'pending') return 'Processing';
+            return status;
+        }
+
+        function getStatusIcon(status) {
+            if (status === 'completed' || status === 'success') return 'fa-check';
+            if (status === 'fraud_reject') return 'fa-ban';
+            if (status === 'failed' || status === 'failure') return 'fa-times';
+            if (status === 'canceled' || status === 'cancelled') return 'fa-ban';
+            if (status === 'invalid_link') return 'fa-link-slash';
+            if (status === 'processing' || status === 'pending') return 'fa-spinner fa-spin';
+            return 'fa-clock';
+        }
+
+        // Time ago helper
+        function timeAgo(date) {
+            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+            
+            if (seconds < 60) return seconds + 's ago';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+            return Math.floor(seconds / 86400) + 'd ago';
+        }
+
+        // Track previous stats for animation
+        let previousStats = {
+            success: 0,
+            rejected: 0,
+            failed: 0,
+            cancelled: 0,
+            invalid_link: 0,
+            processing: 0
+        };
+
+        // Track previous job states for transition detection
+        let previousJobStates = new Map(); // job_id -> status
+
+        // Get color for status type - balanced colors
+        function getColorForStatus(statusClass) {
+            const colors = {
+                'success': { color: '#2dd4bf', glow: 'rgba(45, 212, 191, 0.4)' },
+                'rejected': { color: '#fb923c', glow: 'rgba(251, 146, 60, 0.4)' },
+                'failed': { color: '#f87171', glow: 'rgba(248, 113, 113, 0.4)' },
+                'cancelled': { color: '#94a3b8', glow: 'rgba(148, 163, 184, 0.4)' },
+                'invalid_link': { color: '#c084fc', glow: 'rgba(192, 132, 252, 0.4)' },
+                'processing': { color: '#60a5fa', glow: 'rgba(96, 165, 250, 0.4)' }
+            };
+            return colors[statusClass] || colors.success;
+        }
+
+        // Create firework effect
+        function createFirework(card, statusClass) {
+            const rect = card.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const colors = getColorForStatus(statusClass);
+            
+            // Create 12 particles
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework';
+                
+                // Calculate random direction
+                const angle = (i / 12) * Math.PI * 2;
+                const distance = 50 + Math.random() * 30;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.cssText = `
+                    position: fixed;
+                    left: ${centerX}px;
+                    top: ${centerY}px;
+                    --tx: ${tx}px;
+                    --ty: ${ty}px;
+                    background: ${colors.color};
+                    box-shadow: 0 0 10px ${colors.color};
+                `;
+                
+                document.body.appendChild(particle);
+                
+                // Remove after animation
+                setTimeout(() => particle.remove(), 800);
+            }
+        }
+
+        // Create cell firework effect (for processing → success transitions)
+        function createCellFirework(cell) {
+            const rect = cell.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Colorful firework colors matching the theme
+            const colors = [
+                '#2dd4bf', // Teal
+                '#60a5fa', // Blue
+                '#fb923c', // Orange
+                '#f87171', // Red
+                '#c084fc', // Purple
+                '#ec4899', // Pink
+                '#14b8a6', // Teal-2
+                '#f97316', // Orange-red
+                '#8b5cf6', // Violet
+                '#06b6d4'  // Cyan
+            ];
+            
+            // Create 24 particles for more dramatic effect
+            for (let i = 0; i < 24; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'cell-firework';
+                
+                // Random color for each particle
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Calculate explosion direction with some randomness
+                const angle = (i / 24) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+                const distance = 40 + Math.random() * 50;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                // Calculate fall distance to bottom of screen
+                const fallDistance = window.innerHeight - centerY + 100;
+                
+                // Add horizontal drift for realistic floating
+                const drift = (Math.random() - 0.5) * 150;
+                
+                // Add random rotation
+                const rotation = (Math.random() - 0.5) * 180;
+                
+                // Random particle size for variety
+                const size = 6 + Math.random() * 4;
+                
+                particle.style.cssText = `
+                    position: fixed;
+                    left: ${centerX}px;
+                    top: ${centerY}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                    border-radius: 50%;
+                    background: ${color};
+                    box-shadow: 0 0 10px ${color}, 0 0 20px ${color};
+                    pointer-events: none;
+                    z-index: 1000;
+                    animation: cellFireworkFall 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+                    --tx: ${tx}px;
+                    --ty: ${ty}px;
+                    --fall: ${fallDistance}px;
+                    --drift: ${drift}px;
+                    --rotation: ${rotation}deg;
+                `;
+                
+                document.body.appendChild(particle);
+                
+                // Remove after animation (2.5s)
+                setTimeout(() => particle.remove(), 2500);
+            }
+            
+            // Add large +1 animation
+            const plusOne = document.createElement('div');
+            plusOne.className = 'cell-plus-one';
+            plusOne.textContent = '+1';
+            plusOne.style.cssText = `
+                position: fixed;
+                left: ${centerX}px;
+                top: ${centerY}px;
+                transform: translate(-50%, -50%);
+                font-size: 32px;
+                font-weight: 900;
+                color: #2dd4bf;
+                text-shadow: 0 0 10px rgba(45, 212, 191, 0.8), 0 0 20px rgba(45, 212, 191, 0.6);
+                pointer-events: none;
+                z-index: 1001;
+                animation: cellPlusOneFloat 1.5s ease-out forwards;
+            `;
+            
+            document.body.appendChild(plusOne);
+            
+            // Remove after animation
+            setTimeout(() => plusOne.remove(), 1500);
+        }
+
+        // Show increment indicator
+        function showIncrement(card, amount, statusClass) {
+            const colors = getColorForStatus(statusClass);
+            const indicator = document.createElement('div');
+            indicator.className = 'increment-indicator';
+            indicator.textContent = `+${amount}`;
+            indicator.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: ${colors.color};
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 700;
+                box-shadow: 0 0 20px ${colors.glow};
+                pointer-events: none;
+                z-index: 100;
+            `;
+            
+            card.style.position = 'relative';
+            card.appendChild(indicator);
+            
+            // Remove after animation
+            setTimeout(() => indicator.remove(), 1000);
+        }
+
+        // Check maintenance status
+        async function checkMaintenanceStatus() {
+            try {
+                const response = await fetch('/api/admin/maintenance-status');
+                if (!response.ok) {
+                    console.error('Maintenance status check failed:', response.status);
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                const indicator = document.getElementById('liveIndicator');
+                const liveText = document.getElementById('liveText');
+                
+                if (data.is_maintenance) {
+                    indicator.classList.add('maintenance');
+                    liveText.textContent = 'Bảo trì';
+                } else {
+                    indicator.classList.remove('maintenance');
+                    liveText.textContent = 'Live';
+                }
+            } catch (error) {
+                console.error('Error checking maintenance status:', error);
+                // Default to Live if error
+                const indicator = document.getElementById('liveIndicator');
+                const liveText = document.getElementById('liveText');
+                indicator.classList.remove('maintenance');
+                liveText.textContent = 'Live';
+            }
+        }
+
+        // Load data from Python API (simpler and more reliable)
+        async function loadData() {
+            try {
+                // Check maintenance status first
+                checkMaintenanceStatus();
+                
+                // Use Python API endpoint
+                const response = await fetch(`/api/status-monitor/jobs?limit=200&type=${verificationType}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.jobs) {
+                    console.error('[ERROR] No jobs data in response');
+                    document.getElementById('jobsContent').innerHTML = '<p style="text-align:center;color:#ef4444;padding:40px">No jobs data received</p>';
+                    return;
+                }
+
+                const jobs = data.jobs;
+                
+                // Calculate stats
+                const stats = {
+                    success: 0,
+                    rejected: 0,
+                    failed: 0,
+                    cancelled: 0,
+                    processing: 0
+                };
+
+                jobs.forEach(job => {
+                    const statusClass = getStatusClass(job.status);
+                    stats[statusClass]++;
+                });
+
+                // Update stats with animations
+                const successElement = document.getElementById('successCount');
+                const rejectedElement = document.getElementById('rejectedCount');
+                const failedElement = document.getElementById('failedCount');
+                const cancelledElement = document.getElementById('cancelledCount');
+                const processingElement = document.getElementById('processingCount');
+                
+                // Check for success increase and trigger animations
+                if (stats.success > previousStats.success) {
+                    const increment = stats.success - previousStats.success;
+                    const successCard = successElement.closest('.stat-card');
+                    showIncrement(successCard, increment, 'success');
+                    createFirework(successCard, 'success');
+                }
+                
+                // Check for other stat increases
+                if (stats.rejected > previousStats.rejected) {
+                    const increment = stats.rejected - previousStats.rejected;
+                    const rejectedCard = rejectedElement.closest('.stat-card');
+                    showIncrement(rejectedCard, increment, 'rejected');
+                }
+                
+                if (stats.failed > previousStats.failed) {
+                    const increment = stats.failed - previousStats.failed;
+                    const failedCard = failedElement.closest('.stat-card');
+                    showIncrement(failedCard, increment, 'failed');
+                }
+                
+                if (stats.cancelled > previousStats.cancelled) {
+                    const increment = stats.cancelled - previousStats.cancelled;
+                    const cancelledCard = cancelledElement.closest('.stat-card');
+                    showIncrement(cancelledCard, increment, 'cancelled');
+                }
+                
+                // Update displayed values
+                successElement.textContent = stats.success;
+                rejectedElement.textContent = stats.rejected;
+                failedElement.textContent = stats.failed;
+                cancelledElement.textContent = stats.cancelled;
+                processingElement.textContent = stats.processing;
+                
+                // Store current stats for next comparison
+                previousStats = { ...stats };
+
+                // Update visualization grid
+                const vizGrid = document.getElementById('vizGrid');
+                const existingCells = vizGrid.children.length;
+                const previousSuccessCount = Array.from(vizGrid.children).filter(c => c.classList.contains('success')).length;
+                vizGrid.innerHTML = '';
+                
+                let newSuccessCells = [];
+                let transitionedCells = []; // Track cells that transitioned from processing to success
+                
+                jobs.slice(0, 200).forEach((job, index) => {
+                    const cell = document.createElement('div');
+                    const statusClass = getStatusClass(job.status);
+                    cell.className = 'viz-cell ' + statusClass;
+                    cell.title = `${job.job_id} - ${getStatusText(job.status)}`;
+                    cell.style.position = 'relative';
+                    
+                    // Check if this job transitioned from processing to success
+                    const previousStatus = previousJobStates.get(job.job_id);
+                    if (previousStatus === 'processing' && statusClass === 'success') {
+                        console.log('✅ Detected transition:', job.job_id, 'from processing to success');
+                        transitionedCells.push({ cell, index });
+                        // Add transition class for smooth color change
+                        cell.classList.add('transitioning');
+                    }
+                    
+                    // Update job state tracking
+                    previousJobStates.set(job.job_id, statusClass);
+                    
+                    if (index >= existingCells) {
+                        cell.classList.add('new');
+                        
+                        // Track new success cells for +1 animation
+                        if (statusClass === 'success') {
+                            newSuccessCells.push(cell);
+                        }
+                    }
+                    
+                    vizGrid.appendChild(cell);
+                });
+                
+                // Trigger confetti burst for transitioned cells at snap moment
+                if (transitionedCells.length > 0) {
+                    transitionedCells.forEach(({ cell, index }, idx) => {
+                        // Trigger confetti at 72% of animation (1.8s into 2.5s animation)
+                        setTimeout(() => {
+                            createSuccessConfetti(cell);
+                        }, 1800 + (idx * 100)); // Stagger slightly
+                    });
+                }
+                
+                // Show +1 animation on new success cells (only if they didn't transition)
+                if (newSuccessCells.length > 0) {
+                    newSuccessCells.forEach((cell, idx) => {
+                        // Skip if this cell already got a firework animation
+                        if (!cell.classList.contains('transitioning')) {
+                            setTimeout(() => {
+                                const plusOne = document.createElement('div');
+                                plusOne.className = 'cell-increment';
+                                plusOne.textContent = '+1';
+                                cell.appendChild(plusOne);
+                                
+                                // Remove after animation
+                                setTimeout(() => plusOne.remove(), 2000);
+                            }, idx * 200); // Stagger animations
+                        }
+                    });
+                }
+
+                // Update progress bar
+                const total = jobs.length;
+                const progressFill = document.getElementById('progressFill');
+                if (total > 0) {
+                    progressFill.innerHTML = `
+                        <div class="progress-segment success" style="width: ${(stats.success / total * 100)}%; background: #2dd4bf;"></div>
+                        <div class="progress-segment rejected" style="width: ${(stats.rejected / total * 100)}%; background: #fb923c;"></div>
+                        <div class="progress-segment failed" style="width: ${(stats.failed / total * 100)}%; background: #f87171;"></div>
+                        <div class="progress-segment cancelled" style="width: ${(stats.cancelled / total * 100)}%; background: #94a3b8;"></div>
+                        <div class="progress-segment processing" style="width: ${(stats.processing / total * 100)}%; background: #60a5fa;"></div>
+                    `;
+                }
+
+                // Update last update time
+                document.getElementById('lastUpdate').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+
+            } catch (error) {
+                console.error('[ERROR] Error loading data:', error);
+            }
+        }
+
+        // Load announcement
+        async function loadAnnouncement() {
+            try {
+                const response = await fetch('/api/status-announcement');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.announcement && data.announcement.is_active) {
+                        const box = document.getElementById('announcementBox');
+                        const text = document.getElementById('announcementText');
+                        
+                        text.textContent = data.announcement.message;
+                        box.className = 'announcement-box ' + (data.announcement.type || 'info');
+                        box.style.display = 'flex';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading announcement:', error);
+            }
+        }
+
+        // Load Gemini daily stats
+        async function loadDailyStats() {
+            try {
+                const response = await fetch('/api/admin/stats/gemini-daily');
+                if (!response.ok) {
+                    console.error('Failed to load daily stats');
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update stat values with animation
+                    const totalElement = document.getElementById('dailyTotalCount');
+                    const successElement = document.getElementById('dailySuccessCount');
+                    const failedElement = document.getElementById('dailyFailedCount');
+                    
+                    // Get current values
+                    const currentTotal = parseInt(totalElement.textContent) || 0;
+                    const currentSuccess = parseInt(successElement.textContent) || 0;
+                    const currentFailed = parseInt(failedElement.textContent) || 0;
+                    
+                    // Only animate if value increases, otherwise update directly
+                    if (data.total_verifications > currentTotal) {
+                        animateValue(totalElement, currentTotal, data.total_verifications, 500);
+                    } else {
+                        totalElement.textContent = data.total_verifications;
+                    }
+                    
+                    if (data.total_success > currentSuccess) {
+                        animateValue(successElement, currentSuccess, data.total_success, 500);
+                    } else {
+                        successElement.textContent = data.total_success;
+                    }
+                    
+                    if (data.total_failed_cancelled > currentFailed) {
+                        animateValue(failedElement, currentFailed, data.total_failed_cancelled, 500);
+                    } else {
+                        failedElement.textContent = data.total_failed_cancelled;
+                    }
+                    
+                    // Update timestamp
+                    const now = new Date();
+                    document.getElementById('dailyStatsUpdate').textContent = now.toLocaleTimeString('vi-VN');
+                }
+            } catch (error) {
+                console.error('Error loading daily stats:', error);
+            }
+        }
+
+        // Animate number counting up
+        function animateValue(element, start, end, duration) {
+            const range = end - start;
+            const increment = range / (duration / 16); // 60fps
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    element.textContent = end;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+
+        // Auto refresh every 10 seconds
+        loadAnnouncement();
+        loadData();
+        loadDailyStats(); // Load daily stats on page load
+        setInterval(loadData, 10000);
+        setInterval(loadDailyStats, 10000); // Refresh daily stats every 10 seconds
+        
+        // Red Envelope Functions - Single Floating Envelope with Random Daily Schedule
+    </script>
+</body>
+</html>

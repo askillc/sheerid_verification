@@ -1,0 +1,333 @@
+/* ============================================
+   Enhanced UI for Old Dashboard
+   Improvements: Better spacing, shadows, hover effects
+   ============================================ */
+
+/* Enhanced Sidebar */
+.sidebar {
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px);
+}
+
+.sidebar-logo {
+    padding: 24px 20px !important;
+    border-bottom: 2px solid var(--border) !important;
+}
+
+.sidebar-logo span {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    color: #6366f1 !important;
+}
+
+/* Enhanced Nav Links */
+.nav-link {
+    margin: 4px 8px !important;
+    border-radius: 12px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: var(--primary);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover::before,
+.nav-link.active::before {
+    transform: scaleY(1);
+}
+
+.nav-link:hover {
+    background: rgba(99, 102, 241, 0.15) !important;
+    transform: translateX(4px);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+/* Enhanced Stat Cards */
+.stat-card {
+    border-radius: 20px !important;
+    border: 1px solid var(--border) !important;
+    background: linear-gradient(135deg, var(--card) 0%, var(--card-hover) 100%) !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover::before {
+    transform: scaleX(1);
+}
+
+.stat-card:hover {
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3) !important;
+    border-color: var(--primary) !important;
+}
+
+.stat-icon {
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.stat-value {
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced Content Cards */
+.content-card {
+    border-radius: 20px !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.content-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+    border-color: var(--primary) !important;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--card) 0%, var(--card-hover) 100%);
+    border-bottom: 2px solid var(--border) !important;
+    border-radius: 20px 20px 0 0 !important;
+}
+
+.card-header h2 {
+    font-weight: 700 !important;
+    color: #ffffff !important;
+}
+
+/* Enhanced Buttons */
+.btn {
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4) !important;
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.98) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success), #059669) !important;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning), #d97706) !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger), #dc2626) !important;
+}
+
+/* Enhanced Table */
+table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th {
+    background: linear-gradient(135deg, var(--darker), var(--card)) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+tr {
+    transition: all 0.2s ease !important;
+}
+
+tr:hover {
+    background: var(--card-hover) !important;
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced Badges */
+.badge {
+    border-radius: 20px !important;
+    padding: 6px 14px !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.badge:hover {
+    transform: scale(1.1);
+}
+
+.badge-success {
+    background: linear-gradient(135deg, var(--success), #059669) !important;
+}
+
+.badge-warning {
+    background: linear-gradient(135deg, var(--warning), #d97706) !important;
+}
+
+.badge-danger {
+    background: linear-gradient(135deg, var(--danger), #dc2626) !important;
+}
+
+.badge-primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+}
+
+/* Enhanced Modal */
+.modal {
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    border-radius: 24px !important;
+    border: 2px solid var(--border) !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--card), var(--card-hover));
+    border-bottom: 2px solid var(--border) !important;
+    border-radius: 24px 24px 0 0 !important;
+}
+
+/* Enhanced Search Box */
+.search-box {
+    border-radius: 12px !important;
+    border: 2px solid var(--border) !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-box:focus-within {
+    border-color: var(--primary) !important;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3) !important;
+    transform: scale(1.02);
+}
+
+/* Enhanced Form Inputs */
+.form-control,
+.form-group input,
+.form-group select,
+.form-group textarea {
+    border-radius: 12px !important;
+    border: 2px solid var(--border) !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-control:focus,
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2) !important;
+    transform: scale(1.01);
+}
+
+/* Enhanced Header */
+.header {
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.header h1 {
+    font-weight: 800 !important;
+    color: #ffffff !important;
+}
+
+/* Enhanced User Info */
+.user-info {
+    border-radius: 12px !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.user-info:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Smooth Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--darker);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+}
+
+/* Glassmorphism Effect */
+.login-box {
+    backdrop-filter: blur(20px) !important;
+    background: rgba(38, 38, 55, 0.8) !important;
+    border: 2px solid var(--border) !important;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Pulse Animation for Important Elements */
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary);
+    }
+    50% {
+        box-shadow: 0 0 20px var(--primary), 0 0 30px var(--primary), 0 0 40px var(--primary);
+    }
+}
+
+.stat-card.highlight {
+    animation: pulse-glow 2s ease-in-out infinite;
+}

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SheerID Verification API Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e4e4e7;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a1a1aa;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h2 {
+            color: #8b5cf6;
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: #06b6d4;
+            font-size: 1.1rem;
+            margin: 20px 0 10px 0;
+        }
+
+        .endpoint {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid #8b5cf6;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-right: 10px;
+        }
+
+        .method.post {
+            background: #22c55e;
+            color: #000;
+        }
+
+        .method.get {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .url {
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: #fbbf24;
+        }
+
+        pre {
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            border: 1px solid #30363d;
+        }
+
+        code {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #e6edf3;
+        }
+
+        .json-key {
+            color: #7ee787;
+        }
+
+        .json-string {
+            color: #a5d6ff;
+        }
+
+        .json-number {
+            color: #79c0ff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge.required {
+            background: #ef4444;
+        }
+
+        .badge.optional {
+            background: #6b7280;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 6px;
+            color: #a1a1aa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: #8b5cf6;
+            color: #fff;
+        }
+
+        .tab:hover {
+            background: rgba(139, 92, 246, 0.5);
+        }
+
+        .code-block {
+            display: none;
+        }
+
+        .code-block.active {
+            display: block;
+        }
+
+        .copy-btn {
+            float: right;
+            background: #8b5cf6;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .copy-btn:hover {
+            background: #7c3aed;
+        }
+
+        .status-table td:first-child {
+            font-family: monospace;
+            color: #fbbf24;
+        }
+
+        .support {
+            text-align: center;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            margin-top: 40px;
+        }
+
+        .support a {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .support a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔐 SheerID Verification API</h1>
+        <p class="subtitle">Integrate student/teacher verification into your application</p>
+
+        <!-- Authentication -->
+        <div class="section">
+            <h2>🔑 Authentication</h2>
+            <p>All API requests require an API key in the header:</p>
+            <pre><code>X-API-Key: sk_your_api_key_here</code></pre>
+            <p style="margin-top: 12px;">Or using Bearer token:</p>
+            <pre><code>Authorization: Bearer sk_your_api_key_here</code></pre>
+        </div>
+
+        <!-- Base URL -->
+        <div class="section">
+            <h2>🌐 Base URL</h2>
+            <pre><code>https://dqsheerid.vercel.app</code></pre>
+        </div>
+
+        <!-- Endpoints -->
+        <div class="section">
+            <h2>📡 API Endpoints</h2>
+
+            <!-- Verify -->
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="url">/api/seller/verify</span>
+                <p style="margin-top: 10px;">Start a new verification job</p>
+
+                <h3>Request Body</h3>
+                <table>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>sheerid_url</td>
+                        <td>string <span class="badge required">required</span></td>
+                        <td>SheerID verification URL</td>
+                    </tr>
+                    <tr>
+                        <td>webhook_url</td>
+                        <td>string <span class="badge optional">optional</span></td>
+                        <td>URL to receive callback when done</td>
+                    </tr>
+                </table>
+
+                <h3>Response</h3>
+                <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-number">true</span>,
+  <span class="json-key">"job_id"</span>: <span class="json-string">"550e8400-e29b-41d4-a716-446655440000"</span>,
+  <span class="json-key">"status"</span>: <span class="json-string">"processing"</span>,
+  <span class="json-key">"remaining_credits"</span>: <span class="json-number">9</span>
+}</code></pre>
+            </div>
+
+            <!-- Status -->
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="url">/api/seller/status/{job_id}</span>
+                <p style="margin-top: 10px;">Check verification job status</p>
+
+                <h3>Response</h3>
+                <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-number">true</span>,
+  <span class="json-key">"job_id"</span>: <span class="json-string">"550e8400-e29b-41d4-a716-446655440000"</span>,
+  <span class="json-key">"status"</span>: <span class="json-string">"completed"</span>,
+  <span class="json-key">"result"</span>: {
+    <span class="json-key">"verified"</span>: <span class="json-number">true</span>,
+    <span class="json-key">"card_image"</span>: <span class="json-string">"https://..."</span>
+  }
+}</code></pre>
+            </div>
+
+            <!-- Balance -->
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="url">/api/seller/balance</span>
+                <p style="margin-top: 10px;">Get account balance and usage</p>
+
+                <h3>Response</h3>
+                <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-number">true</span>,
+  <span class="json-key">"name"</span>: <span class="json-string">"Your Shop"</span>,
+  <span class="json-key">"credits"</span>: <span class="json-number">10</span>,
+  <span class="json-key">"total_used"</span>: <span class="json-number">5</span>
+}</code></pre>
+            </div>
+
+            <!-- Jobs List -->
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="url">/api/seller/jobs</span>
+                <p style="margin-top: 10px;">Get list of verification jobs</p>
+
+                <h3>Query Parameters</h3>
+                <table>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>limit</td>
+                        <td>20</td>
+                        <td>Number of jobs (max 100)</td>
+                    </tr>
+                    <tr>
+                        <td>offset</td>
+                        <td>0</td>
+                        <td>Pagination offset</td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>-</td>
+                        <td>Filter by status</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Status Values -->
+        <div class="section">
+            <h2>📊 Status Values</h2>
+            <table class="status-table">
+                <tr>
+                    <th>Status</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>pending</td>
+                    <td>Job created, waiting to process</td>
+                </tr>
+                <tr>
+                    <td>processing</td>
+                    <td>Verification in progress</td>
+                </tr>
+                <tr>
+                    <td>completed</td>
+                    <td>Verification successful</td>
+                </tr>
+                <tr>
+                    <td>failed</td>
+                    <td>Verification failed (credit refunded)</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Webhook -->
+        <div class="section">
+            <h2>🔔 Webhook Callback</h2>
+            <p>When verification completes, we'll POST to your webhook URL:</p>
+            <pre><code>{
+  <span class="json-key">"event"</span>: <span class="json-string">"verification.completed"</span>,
+  <span class="json-key">"job_id"</span>: <span class="json-string">"550e8400-e29b-41d4-a716-446655440000"</span>,
+  <span class="json-key">"status"</span>: <span class="json-string">"success"</span>,
+  <span class="json-key">"data"</span>: {
+    <span class="json-key">"verified"</span>: <span class="json-number">true</span>,
+    <span class="json-key">"card_image"</span>: <span class="json-string">"https://..."</span>
+  }
+}</code></pre>
+        </div>
+
+        <!-- Code Examples -->
+        <div class="section">
+            <h2>💻 Code Examples</h2>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showCode('curl')">cURL</button>
+                <button class="tab" onclick="showCode('python')">Python</button>
+                <button class="tab" onclick="showCode('php')">PHP</button>
+                <button class="tab" onclick="showCode('nodejs')">Node.js</button>
+            </div>
+
+            <div id="curl" class="code-block active">
+                <pre><code># Start verification
+curl -X POST https://dqsheerid.vercel.app/api/seller/verify \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: sk_your_api_key" \
+  -d '{"sheerid_url": "https://services.sheerid.com/verify/xxx/"}'
+
+# Check status
+curl https://dqsheerid.vercel.app/api/seller/status/JOB_ID \
+  -H "X-API-Key: sk_your_api_key"
+
+# Check balance
+curl https://dqsheerid.vercel.app/api/seller/balance \
+  -H "X-API-Key: sk_your_api_key"</code></pre>
+            </div>
+
+            <div id="python" class="code-block">
+                <pre><code>import requests
+
+API_KEY = "sk_your_api_key"
+BASE_URL = "https://dqsheerid.vercel.app"
+
+headers = {
+    "X-API-Key": API_KEY,
+    "Content-Type": "application/json"
+}
+
+# Start verification
+response = requests.post(
+    f"{BASE_URL}/api/seller/verify",
+    headers=headers,
+    json={"sheerid_url": "https://services.sheerid.com/verify/xxx/"}
+)
+result = response.json()
+print(result)
+
+# Check status
+job_id = result.get("job_id")
+status = requests.get(
+    f"{BASE_URL}/api/seller/status/{job_id}",
+    headers=headers
+)
+print(status.json())</code></pre>
+            </div>
+
+            <div id="php" class="code-block">
+                <pre><code>&lt;?php
+$api_key = "sk_your_api_key";
+$base_url = "https://dqsheerid.vercel.app";
+
+// Start verification
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "$base_url/api/seller/verify");
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "X-API-Key: $api_key",
+    "Content-Type: application/json"
+]);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+    "sheerid_url" => "https://services.sheerid.com/verify/xxx/"
+]));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+$result = json_decode($response, true);
+curl_close($ch);
+
+print_r($result);
+?&gt;</code></pre>
+            </div>
+
+            <div id="nodejs" class="code-block">
+                <pre><code>const axios = require('axios');
+
+const API_KEY = 'sk_your_api_key';
+const BASE_URL = 'https://dqsheerid.vercel.app';
+
+const headers = {
+    'X-API-Key': API_KEY,
+    'Content-Type': 'application/json'
+};
+
+// Start verification
+async function verify() {
+    const response = await axios.post(
+        `${BASE_URL}/api/seller/verify`,
+        { sheerid_url: 'https://services.sheerid.com/verify/xxx/' },
+        { headers }
+    );
+    console.log(response.data);
+    
+    // Check status
+    const status = await axios.get(
+        `${BASE_URL}/api/seller/status/${response.data.job_id}`,
+        { headers }
+    );
+    console.log(status.data);
+}
+
+verify();</code></pre>
+            </div>
+        </div>
+
+        <!-- Error Codes -->
+        <div class="section">
+            <h2>❌ Error Codes</h2>
+            <table>
+                <tr>
+                    <th>Code</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td>200</td>
+                    <td>Success</td>
+                </tr>
+                <tr>
+                    <td>400</td>
+                    <td>Bad Request - Invalid parameters</td>
+                </tr>
+                <tr>
+                    <td>401</td>
+                    <td>Unauthorized - Invalid API key</td>
+                </tr>
+                <tr>
+                    <td>402</td>
+                    <td>Payment Required - Insufficient credits</td>
+                </tr>
+                <tr>
+                    <td>404</td>
+                    <td>Not Found - Job not found</td>
+                </tr>
+                <tr>
+                    <td>500</td>
+                    <td>Server Error</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Support -->
+        <div class="support">
+            <h3>Need Help?</h3>
+            <p>Contact us on Telegram: <a href="https://t.me/meepzizhere" target="_blank">@meepzizhere</a></p>
+        </div>
+    </div>
+
+    <script>
+        function showCode(lang) {
+            // Hide all code blocks
+            document.querySelectorAll('.code-block').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Remove active from all tabs
+            document.querySelectorAll('.tab').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Show selected
+            document.getElementById(lang).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>
