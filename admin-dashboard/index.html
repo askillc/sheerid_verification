@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SheerID Admin Dashboard</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/admin-dashboard/css/main.css">
+    <link rel="stylesheet" href="/admin-dashboard/css/components.css">
+    <link rel="stylesheet" href="/admin-dashboard/css/animations.css">
+    <link rel="stylesheet" href="/admin-dashboard/css/responsive.css">
+</head>
+<body>
+    <!-- Login Container (shown when not authenticated) -->
+    <div class="login-container" id="login-container" style="display: none;">
+        <div class="login-box">
+            <div class="login-header">
+                <i class="fas fa-shield-alt"></i>
+                <h1>SheerID Admin</h1>
+                <p>Sign in to access the dashboard</p>
+            </div>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+                <div class="error-message" id="login-error" style="display: none;"></div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Container (shown when authenticated) -->
+    <div class="dashboard-container" id="dashboard-container" style="display: none;">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>SheerID Admin</h1>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item active" data-section="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </li>
+            <li class="menu-item" data-section="users">
+                <i class="fas fa-users"></i>
+                <span>Users</span>
+            </li>
+            <li class="menu-item" data-section="jobs">
+                <i class="fas fa-tasks"></i>
+                <span>Jobs</span>
+            </li>
+            <li class="menu-item" data-section="transactions">
+                <i class="fas fa-dollar-sign"></i>
+                <span>Transactions</span>
+            </li>
+            <li class="menu-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="main-content">
+        <header class="content-header">
+            <button class="hamburger-menu" id="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="section-title" id="section-title">Dashboard</h2>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section class="content-section active" id="dashboard-section">
+            <div class="dashboard-content">
+                <!-- Statistics Overview -->
+                <div class="stats-header">
+                    <h3>System Overview</h3>
+                    <div class="stats-actions">
+                        <span class="stats-last-update" id="stats-last-update">Last updated: --:--:--</span>
+                        <button class="btn btn-secondary btn-sm" id="refresh-stats-btn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Statistics Cards -->
+                <div class="stats-section">
+                    <h4 class="stats-section-title">User Statistics</h4>
+                    <div class="stat-cards-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #3b82f6;">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">Total Users</div>
+                                <div class="stat-card-value" id="stat-total-users">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #f59e0b;">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">VIP Users</div>
+                                <div class="stat-card-value" id="stat-vip-users">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #ef4444;">
+                                <i class="fas fa-ban"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">Blocked Users</div>
+                                <div class="stat-card-value" id="stat-blocked-users">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #10b981;">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">New Today</div>
+                                <div class="stat-card-value" id="stat-new-users">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Statistics Cards -->
+                <div class="stats-section">
+                    <h4 class="stats-section-title">Job Statistics</h4>
+                    <div class="stat-cards-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #6366f1;">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">Total Jobs</div>
+                                <div class="stat-card-value" id="stat-total-jobs">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #f59e0b;">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">Pending</div>
+                                <div class="stat-card-value" id="stat-pending-jobs">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #10b981;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">Completed</div>
+                                <div class="stat-card-value" id="stat-completed-jobs">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #ef4444;">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">Failed</div>
+                                <div class="stat-card-value" id="stat-failed-jobs">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-card-highlight">
+                            <div class="stat-card-icon" style="background-color: #8b5cf6;">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">Success Rate</div>
+                                <div class="stat-card-value" id="stat-success-rate">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue Statistics Cards -->
+                <div class="stats-section">
+                    <h4 class="stats-section-title">Revenue Statistics</h4>
+                    <div class="stat-cards-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #10b981;">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">Today</div>
+                                <div class="stat-card-value" id="stat-today-revenue">$0.00</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #3b82f6;">
+                                <i class="fas fa-calendar-week"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">This Week</div>
+                                <div class="stat-card-value" id="stat-week-revenue">$0.00</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card-icon" style="background-color: #8b5cf6;">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-label">This Month</div>
+                                <div class="stat-card-value" id="stat-month-revenue">$0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="stats-section">
+                    <h4 class="stats-section-title">Trends</h4>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h5 class="chart-title">User Growth (Last 30 Days)</h5>
+                            <div class="chart-wrapper">
+                                <canvas id="user-growth-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <h5 class="chart-title">Revenue Trends (Last 30 Days)</h5>
+                            <div class="chart-wrapper">
+                                <canvas id="revenue-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Users Section -->
+        <section class="content-section" id="users-section">
+            <div class="users-content">
+                <!-- User List Controls -->
+                <div class="list-controls">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="user-search" placeholder="Search by username, user ID, or email...">
+                    </div>
+                    <div class="filter-controls">
+                        <select class="filter-select" id="user-status-filter" name="status">
+                            <option value="all">All Users</option>
+                            <option value="vip">VIP Only</option>
+                            <option value="blocked">Blocked</option>
+                            <option value="active">Active</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- User List Table -->
+                <div class="table-container">
+                    <table class="data-table" id="user-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username</th>
+                                <th>Coins</th>
+                                <th>Cash</th>
+                                <th>VIP Status</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body">
+                            <!-- Populated dynamically by users.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="pagination-controls" id="user-pagination">
+                    <!-- Populated dynamically by Pagination component -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Jobs Section -->
+        <section class="content-section" id="jobs-section">
+            <div class="jobs-content">
+                <!-- Job List Controls -->
+                <div class="list-controls">
+                    <div class="filter-controls">
+                        <select class="filter-select" id="job-status-filter" name="status">
+                            <option value="all">All Jobs</option>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                            <option value="failed">Failed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <input type="date" class="date-filter" id="job-start-date" name="startDate" placeholder="Start Date">
+                        <input type="date" class="date-filter" id="job-end-date" name="endDate" placeholder="End Date">
+                        <button class="btn btn-secondary btn-sm" id="clear-job-filters">
+                            <i class="fas fa-times"></i> Clear Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Job List Table -->
+                <div class="table-container">
+                    <table class="data-table" id="job-table">
+                        <thead>
+                            <tr>
+                                <th>Job ID</th>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="job-table-body">
+                            <!-- Populated dynamically by jobs.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="pagination-controls" id="job-pagination">
+                    <!-- Populated dynamically by Pagination component -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Transactions Section -->
+        <section class="content-section" id="transactions-section">
+            <div class="transactions-content">
+                <!-- Transaction List Controls -->
+                <div class="list-controls">
+                    <div class="filter-controls">
+                        <select class="filter-select" id="transaction-type-filter" name="type">
+                            <option value="all">All Types</option>
+                            <option value="deposit">Deposits</option>
+                            <option value="verify">Verifications</option>
+                            <option value="shop">Shop Purchases</option>
+                            <option value="vip_purchase">VIP Purchases</option>
+                            <option value="refund">Refunds</option>
+                        </select>
+                        <input type="date" class="date-filter" id="transaction-start-date" name="startDate" placeholder="Start Date">
+                        <input type="date" class="date-filter" id="transaction-end-date" name="endDate" placeholder="End Date">
+                        <button class="btn btn-secondary btn-sm" id="clear-transaction-filters">
+                            <i class="fas fa-times"></i> Clear Filters
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="export-transactions-btn">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Transaction List Table -->
+                <div class="table-container">
+                    <table class="data-table" id="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaction-table-body">
+                            <!-- Populated dynamically by transactions.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="pagination-controls" id="transaction-pagination">
+                    <!-- Populated dynamically by Pagination component -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section class="content-section" id="settings-section">
+            <div class="settings-content">
+                <div class="settings-container">
+                    <!-- System Settings Section -->
+                    <div class="settings-section">
+                        <h2 class="settings-section-title">
+                            <i class="fas fa-cog"></i>
+                            System Settings
+                        </h2>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="maintenance-mode">Maintenance Mode</label>
+                                    <small class="setting-description">Temporarily disable bot access for all users</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="maintenance-mode">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item" id="maintenance-message-item" style="display: none;">
+                                <div class="setting-label">
+                                    <label for="maintenance-message">Maintenance Message</label>
+                                    <small class="setting-description">Message displayed to users during maintenance</small>
+                                </div>
+                                <textarea id="maintenance-message" class="form-input" rows="3" placeholder="Enter maintenance message"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bot Configuration Section -->
+                    <div class="settings-section">
+                        <h2 class="settings-section-title">
+                            <i class="fas fa-robot"></i>
+                            Bot Configuration
+                        </h2>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="welcome-bonus">Welcome Bonus (Coins)</label>
+                                    <small class="setting-description">Coins awarded to new users upon registration</small>
+                                </div>
+                                <input type="number" id="welcome-bonus" class="form-input" min="0" placeholder="0">
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="verify-price">Verification Price (Coins)</label>
+                                    <small class="setting-description">Cost per verification request</small>
+                                </div>
+                                <input type="number" id="verify-price" class="form-input" min="0" placeholder="0">
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="vip-price-basic">VIP Basic Price (USD)</label>
+                                    <small class="setting-description">Monthly subscription price for Basic tier</small>
+                                </div>
+                                <input type="number" id="vip-price-basic" class="form-input" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="vip-price-pro">VIP Pro Price (USD)</label>
+                                    <small class="setting-description">Monthly subscription price for Pro tier</small>
+                                </div>
+                                <input type="number" id="vip-price-pro" class="form-input" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="vip-price-business">VIP Business Price (USD)</label>
+                                    <small class="setting-description">Monthly subscription price for Business tier</small>
+                                </div>
+                                <input type="number" id="vip-price-business" class="form-input" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proxy Settings Section -->
+                    <div class="settings-section">
+                        <h2 class="settings-section-title">
+                            <i class="fas fa-network-wired"></i>
+                            Proxy Settings
+                        </h2>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="proxy-enabled">Proxy Enabled</label>
+                                    <small class="setting-description">Enable proxy for API requests</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="proxy-enabled">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item" id="proxy-url-item">
+                                <div class="setting-label">
+                                    <label for="proxy-url">Proxy URL</label>
+                                    <small class="setting-description">Full proxy URL (e.g., http://proxy.example.com:8080)</small>
+                                </div>
+                                <input type="text" id="proxy-url" class="form-input" placeholder="http://proxy.example.com:8080">
+                            </div>
+                            <div class="setting-item" id="proxy-username-item">
+                                <div class="setting-label">
+                                    <label for="proxy-username">Proxy Username</label>
+                                    <small class="setting-description">Username for proxy authentication (optional)</small>
+                                </div>
+                                <input type="text" id="proxy-username" class="form-input" placeholder="Username">
+                            </div>
+                            <div class="setting-item" id="proxy-password-item">
+                                <div class="setting-label">
+                                    <label for="proxy-password">Proxy Password</label>
+                                    <small class="setting-description">Password for proxy authentication (optional)</small>
+                                </div>
+                                <input type="password" id="proxy-password" class="form-input" placeholder="Password">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fraud Detection Section -->
+                    <div class="settings-section">
+                        <h2 class="settings-section-title">
+                            <i class="fas fa-shield-alt"></i>
+                            Fraud Detection
+                        </h2>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="max-daily-verifications">Max Daily Verifications</label>
+                                    <small class="setting-description">Maximum verifications per user per day</small>
+                                </div>
+                                <input type="number" id="max-daily-verifications" class="form-input" min="1" placeholder="10">
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="fraud-threshold">Suspicious Activity Threshold</label>
+                                    <small class="setting-description">Number of failed attempts before flagging as suspicious</small>
+                                </div>
+                                <input type="number" id="fraud-threshold" class="form-input" min="1" placeholder="5">
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <label for="auto-block-enabled">Auto-Block Suspicious Users</label>
+                                    <small class="setting-description">Automatically block users exceeding fraud threshold</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="auto-block-enabled">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="settings-actions">
+                        <button class="btn btn-primary btn-lg" id="save-settings-btn">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                        <button class="btn btn-secondary btn-lg" id="reset-settings-btn">
+                            <i class="fas fa-undo"></i> Reset to Defaults
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <!-- Modal Container -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+
+    <!-- User Detail Modal Template -->
+    <div class="modal" id="user-detail-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">User Details</h3>
+                <button class="modal-close" data-modal="user-detail-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="user-detail-body">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Coins Modal Template -->
+    <div class="modal" id="edit-coins-modal" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Coins</h3>
+                <button class="modal-close" data-modal="edit-coins-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-coins-form">
+                    <input type="hidden" id="edit-coins-user-id">
+                    <div class="form-group">
+                        <label for="coins-amount">Amount (use negative to subtract)</label>
+                        <input type="number" id="coins-amount" class="form-input" placeholder="Enter amount" required>
+                        <small class="form-help">Current balance: <span id="current-coins">0</span> coins</small>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-modal="edit-coins-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Coins</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Cash Modal Template -->
+    <div class="modal" id="edit-cash-modal" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Cash</h3>
+                <button class="modal-close" data-modal="edit-cash-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-cash-form">
+                    <input type="hidden" id="edit-cash-user-id">
+                    <div class="form-group">
+                        <label for="cash-amount">Amount (use negative to subtract)</label>
+                        <input type="number" id="cash-amount" class="form-input" step="0.01" placeholder="Enter amount" required>
+                        <small class="form-help">Current balance: $<span id="current-cash">0.00</span></small>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-modal="edit-cash-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Cash</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage VIP Modal Template -->
+    <div class="modal" id="manage-vip-modal" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Manage VIP Status</h3>
+                <button class="modal-close" data-modal="manage-vip-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="manage-vip-form">
+                    <input type="hidden" id="manage-vip-user-id">
+                    <div class="form-group">
+                        <label for="vip-tier">VIP Tier</label>
+                        <select id="vip-tier" class="form-input" required>
+                            <option value="none">None (Remove VIP)</option>
+                            <option value="basic">Basic</option>
+                            <option value="pro">Pro</option>
+                            <option value="business">Business</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="vip-duration-group">
+                        <label for="vip-duration">Duration (days)</label>
+                        <input type="number" id="vip-duration" class="form-input" min="1" placeholder="Enter duration in days" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-modal="manage-vip-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update VIP Status</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block User Modal Template -->
+    <div class="modal" id="block-user-modal" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Block User</h3>
+                <button class="modal-close" data-modal="block-user-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="block-user-form">
+                    <input type="hidden" id="block-user-id">
+                    <div class="form-group">
+                        <label for="block-reason">Reason for blocking</label>
+                        <textarea id="block-reason" class="form-input" rows="3" placeholder="Enter reason for blocking this user" required></textarea>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>This user will be unable to use the bot while blocked.</span>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-modal="block-user-modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Block User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Message Modal Template -->
+    <div class="modal" id="send-message-modal" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Send Message</h3>
+                <button class="modal-close" data-modal="send-message-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="send-message-form">
+                    <input type="hidden" id="message-user-id">
+                    <div class="form-group">
+                        <label for="message-text">Message</label>
+                        <textarea id="message-text" class="form-input" rows="5" placeholder="Enter your message to the user" required></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-modal="send-message-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Set Verification Limit Modal Template -->
+    <div class="modal" id="set-limit-modal" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Set Verification Limit</h3>
+                <button class="modal-close" data-modal="set-limit-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="set-limit-form">
+                    <input type="hidden" id="set-limit-user-id">
+                    <div class="form-group">
+                        <label for="daily-limit">Daily Verification Limit</label>
+                        <input type="number" id="daily-limit" class="form-input" min="0" placeholder="Enter daily limit" required>
+                        <small class="form-help">Set to 0 for unlimited verifications</small>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-modal="set-limit-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Limit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Detail Modal Template -->
+    <div class="modal" id="job-detail-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Job Details</h3>
+                <button class="modal-close" data-modal="job-detail-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="job-detail-body">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Retry Job Confirmation Modal Template -->
+    <div class="modal" id="retry-job-modal" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Retry Job</h3>
+                <button class="modal-close" data-modal="retry-job-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="retry-job-form">
+                    <input type="hidden" id="retry-job-id">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>This will resubmit the failed job for processing. Are you sure you want to continue?</span>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-modal="retry-job-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Retry Job</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Job Confirmation Modal Template -->
+    <div class="modal" id="delete-job-modal" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Delete Job</h3>
+                <button class="modal-close" data-modal="delete-job-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="delete-job-form">
+                    <input type="hidden" id="delete-job-id">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>This action cannot be undone. Are you sure you want to delete this job?</span>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-modal="delete-job-modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete Job</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Detail Modal Template -->
+    <div class="modal" id="transaction-detail-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Transaction Details</h3>
+                <button class="modal-close" data-modal="transaction-detail-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="transaction-detail-body">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+    </div> <!-- End dashboard-container -->
+
+    <!-- Scripts -->
+    <script src="/admin-dashboard/js/auth.js"></script>
+    <script src="/admin-dashboard/js/api.js"></script>
+    <script src="/admin-dashboard/js/ui.js"></script>
+    <script src="/admin-dashboard/js/utils.js"></script>
+    <script src="/admin-dashboard/js/statistics.js"></script>
+    <script src="/admin-dashboard/js/users.js"></script>
+    <script src="/admin-dashboard/js/jobs.js"></script>
+    <script src="/admin-dashboard/js/transactions.js"></script>
+    <script src="/admin-dashboard/js/settings.js"></script>
+    <script src="/admin-dashboard/js/main.js"></script>
+</body>
+</html>

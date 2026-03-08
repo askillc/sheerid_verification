@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #fff;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .transcript-container {
+            width: 800px;
+            min-height: 1000px;
+            padding: 40px 60px;
+            background: white;
+            position: relative;
+        }
+
+        /* Header - University Name */
+        .university-header {
+            text-align: center;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #2c5282;
+            padding-bottom: 15px;
+        }
+
+        .university-name {
+            font-size: 28px;
+            color: #2c5282;
+            font-weight: normal;
+            font-family: 'Georgia', serif;
+        }
+
+        .university-address {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Title */
+        .transcript-title {
+            text-align: center;
+            font-size: 15px;
+            letter-spacing: 3px;
+            color: #333;
+            margin: 35px 0 30px 0;
+            font-weight: normal;
+        }
+
+        /* Student Info Section */
+        .student-info-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        .info-left,
+        .info-right {
+            width: 48%;
+        }
+
+        .info-row {
+            margin-bottom: 12px;
+        }
+
+        .info-label {
+            color: #2c5282;
+            font-size: 12px;
+            margin-bottom: 2px;
+            text-decoration: underline;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Course Table */
+        .course-section {
+            margin: 25px 0;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+
+        .course-header {
+            display: flex;
+            font-size: 11px;
+            color: #666;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 5px;
+        }
+
+        .course-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .col-code {
+            width: 80px;
+        }
+
+        .col-title {
+            flex: 1;
+        }
+
+        .col-credits {
+            width: 70px;
+            text-align: center;
+        }
+
+        .col-grade {
+            width: 70px;
+            text-align: center;
+        }
+
+        .col-term {
+            width: 100px;
+            text-align: right;
+        }
+
+        /* GPA Section */
+        .gpa-section {
+            text-align: right;
+            margin-top: 35px;
+            padding-right: 10px;
+        }
+
+        .gpa-label {
+            color: #2c5282;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .gpa-value {
+            font-size: 32px;
+            color: #c53030;
+            font-weight: normal;
+        }
+
+        .credits-earned {
+            color: #c53030;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 50px;
+            left: 60px;
+            right: 60px;
+            text-align: center;
+        }
+
+        .footer-date {
+            color: #2c5282;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .signature-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .signature-label {
+            color: #2c5282;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .signature-line-draw {
+            width: 180px;
+            border-bottom: 1px solid #999;
+        }
+
+        .registrar-title {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="transcript-container">
+        <!-- University Header -->
+        <div class="university-header">
+            <div class="university-name">{{universityName}}</div>
+            <div class="university-address">{{universityAddress}}</div>
+        </div>
+
+        <!-- Title -->
+        <div class="transcript-title">OFFICIAL ACADEMIC TRANSCRIPT</div>
+
+        <!-- Student Info -->
+        <div class="student-info-section">
+            <div class="info-left">
+                <div class="info-row">
+                    <div class="info-label">Student Name</div>
+                    <div class="info-value">{{firstName}} {{lastName}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Program</div>
+                    <div class="info-value">{{program}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Date of Birth</div>
+                    <div class="info-value">{{dob}}</div>
+                </div>
+            </div>
+            <div class="info-right">
+                <div class="info-row">
+                    <div class="info-label">Student ID</div>
+                    <div class="info-value">{{studentId}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Expected Graduation</div>
+                    <div class="info-value">{{expectedGraduation}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">SSN/ID</div>
+                    <div class="info-value">{{ssnMasked}}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Table -->
+        <div class="course-section">
+            <div class="course-header">
+                <span class="col-code">Course Code</span>
+                <span class="col-title">Course Title</span>
+                <span class="col-credits">Credits</span>
+                <span class="col-grade">Grade</span>
+                <span class="col-term">Term</span>
+            </div>
+            {{courseRows}}
+        </div>
+
+        <!-- GPA Section -->
+        <div class="gpa-section">
+            <div class="gpa-label">Cumulative GPA</div>
+            <div class="gpa-value">{{gpa}}</div>
+            <div class="credits-earned">Total Credits Earned: {{totalCredits}}</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-date">Official transcript issued on: {{issueDate}}</div>
+            <div class="signature-line">
+                <span class="signature-label">Authorized Signature:</span>
+                <span class="signature-line-draw"></span>
+            </div>
+            <div class="registrar-title">{{registrarTitle}}</div>
+        </div>
+    </div>
+</body>
+
+</html>
